@@ -5,6 +5,7 @@ Work through Pro MERN Stack 2nd Ed
 ### Summary & Functionality Added:
 The purpose of this chapter was to introduce React components, and to use composition for composing larger elements. The functionality added during this chapter included using React classes instead of elements to depict components, and using `map()` to generate components based on an array of input data. The generaged components are placeholders thus far for some components yet to be developed, but provided a skeleton structure for the main page of the Issue Tracker application.
 
+![ch03](/readme_images/ch3.png)
 
 ### Chapter 3 Notes:
 
