@@ -15,6 +15,10 @@ Work through Pro MERN Stack 2nd Ed
     1. All installations are *local* to the project directory. THis means that a different project can use a different version of any of the installed packages.
     2. A package's dependencies are also isolated within the package.
     3. Administrator (superuser) rights are note needed to install a package.
+    - Command to start the server: `npm start`.
+    - To determine the babel version after installation without local directory file path constraints, the command  `npx babel --version` can be executed at the command line.
 
-### Errors:
+### Errors & Issues:
  - Listing 2-1 should read  `ReactDOM.render(element, document.getElementByID('contents'));`. The listing has a typo and passs the argument `content` instead of `contents` inside the `getElementByID()` method. The typo causes the method to return `null` and not properly render *"Hello World"* becauseno element with that ID exists.
+ - For build time JSX transformation, babel tools needed to be installed. I had an issue with installation. Resolved after realizing that `npm install --save-dev @babel/core@7 @babel/cli@7` needed to be executed within the `src` folder.
+ - Listing 2-7 is missing an opening `<` and should read  `<script src="App.js></script>`.
