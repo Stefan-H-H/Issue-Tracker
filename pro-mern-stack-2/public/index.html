@@ -14,20 +14,7 @@
 <body>
     <div id="contents"></div>
 
-    <script type="text/babel">
-        // This section uses JavaScript to directly create the virtual DOM
-        // const element = React.createElement('div', {title: 'Outer div'},
-        // React.createElement('h1', null, 'Hello World!')
-        // );
-
-        // This code uses JSX(JavaScript XML) to creat the virtual DOM
-        const element = (
-            <div title="Outer div">
-            <h1>Hello World!</h1>
-            </div>
-        );
-        
-        ReactDOM.render(element, document.getElementById('contents'));
+    <script type="text/babel" src="/App.jsx">
     </script>
 </body>
 
