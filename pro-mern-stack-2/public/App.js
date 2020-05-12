@@ -41,7 +41,7 @@ var IssueRow = /*#__PURE__*/function (_React$Component) {
         style: style
       }, this.props.issue_id), /*#__PURE__*/React.createElement("td", {
         style: style
-      }, this.props.issue_title));
+      }, this.props.children));
     }
   }]);
 
@@ -97,13 +97,11 @@ var IssueTable = /*#__PURE__*/function (_React$Component3) {
         style: rowStyle
       }, "Title"))), /*#__PURE__*/React.createElement("tbody", null, /*#__PURE__*/React.createElement(IssueRow, {
         rowStyle: rowStyle,
-        issue_id: 1,
-        issue_title: "Error in console when clicking Add"
-      }), /*#__PURE__*/React.createElement(IssueRow, {
+        issue_id: 1
+      }, "Error in console when clicking Add"), /*#__PURE__*/React.createElement(IssueRow, {
         rowStyle: rowStyle,
-        issue_id: 2,
-        issue_title: "Missing bottom border on panel"
-      })));
+        issue_id: 2
+      }, "Missing bottom border on panel")));
     }
   }]);
 
