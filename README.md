@@ -1,6 +1,48 @@
 # StefanHristov-Book  
 Work through Pro MERN Stack 2nd Ed
 ---
+## Chapter 4
+### Summary & Functionality Added:
+
+#### Initial State:
+- The state of a `component` is captured in a variable called `this.state` in the component's class, and should be an object of one or more key-value pairs. Each key is a state variable name and the value is the current value of the variable. It is useful to store anything that affects the rendered view and can change due to any event in the **state**.
+#### Async State Initialization:
+- It is unlikely that regular SPA (Single Page Application) components will have the initial state available to them statically. They are typicall fetched form the server. For our initial list of issues, to be displayed, they would need to be fetched via an API call.
+- The **state** can only be assigned a value in the constructor. After, the **state** can be modified, but only via a call to `React.Component`'s `this.setState()` method. The method takes a single argument ,which is an object containing the changed state variables and their corresponding values.
+- Here a `setTimeout()` method call is used to simulate a asynchronous call to the server.
+- The `constructor()` for the `IssueTable` class only constucts the *component*, it does not render the UI. As such, if the `this.setState()` method gets called before the component is ready to be rendered, errors occur.
+#### Updating State:
+- Added a `createIssue()` method to the `IssueTable` class to add a new issue. This allows us to change a portion of the **state**.
+- The variable `this.state` in the component should always be treated as immutable.
+- The only way to let React know something has changed, and to cause a rerender, is to call `this.setState()`.
+- The `setState()` method needs a copy of the unchanged elements and a copy of the object that is being changed. There are libraries called *immutability helpers* such as `immutable.js` `(http://facebook.github.io/immutable-js/)`, which can be used to construct hte new state object. *(See pg 66).*
+- React automatically propogates any changes to child components that depend on the parent component's state.
+- When `render()` is called, this does not mean that the `DOM` is updated. Only the `virtual DOM` is recreated on each `render()`. Real `DOM` updates happens where there are differences.
+#### Lifting State Up:
+- Only parent components can pass information down to children. The way around this is to have the *common parent* contain the state and all the methods that deal with this state.
+- Data can be passed in from a parent to child in the form of `props`.
+- In ES2015, the arrow function has the effect of setting the context (the value of `this`) to the *lexical scope*. In order to have the proper scope when passing method data downt to a child, the `bind()` method can be used to bind the method scope reference to the parent before passing the method to the child. It's best practice to bind the specified method within the constructor of the parent class.
+#### Event Handling:
+- Here we create a form with two text input fields and a button to allow a user to add an issue interactively.
+- In order to prevent a form from being submitted when the **Add** button is clicked, we can call `preventDefault()` function on the event.
+- `documents.forms.issueAdd` allows us to save the form and its contents to a variable, which we can then acess to create a new issue using the `createIssue()` method via `this.props.createIssue()`.
+- The `value` property (e.g. `form.owner.value`) allows us to obtain the user input value from the `DOM` element.
+- Once a new issue has been added, in order for the changes to persist, we either need to save the change in local storage on the browser or save it in the server.
+- The default action of a `form` is to a `GET HTTP` request with the values in the form.
+#### Stateless Components:
+- For performance reasons adn for clarity of code, it is recommended that components with nothing but a `render()` method, aka *Stateless Compenents* are written as functions rather than classes. The functions would simply take in `props` and render based on it.
+#### Designing Components:
+| Attribute   | State                                  | Props                                                       |
+|-------------|----------------------------------------|-------------------------------------------------------------|
+| Mutability  | Can be changed using `this.setState()` | Cannot be changed                                           |
+| Ownership   | Belongs to the component               | Belongs to an ancestor, the component gets a read-only copy |
+| Information | Model information                      | Model information                                           |
+| Affects     | Rendering of the component             | Rendering of the component                                  |
+
+### Errors & Issues:
+- No errors or issues.
+
+
 ## Chapter 3
 ### Summary & Functionality Added:
 The purpose of this chapter was to introduce React components, and to use composition for composing larger elements. The functionality added during this chapter included using React classes instead of elements to depict components, and using `map()` to generate components based on an array of input data. The generaged components are placeholders thus far for some components yet to be developed, but provided a skeleton structure for the main page of the Issue Tracker application.
