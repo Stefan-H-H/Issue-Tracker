@@ -3,6 +3,9 @@ Work through Pro MERN Stack 2nd Ed
 ---
 ## Chapter 4
 ### Summary & Functionality Added:
+This chapter explores how React handles model information using **state** and **properties**. This chapter walkthrough allows us to add the functionality of being able to add and create new issues interactively via a form with a submission button.
+
+![ch04](/readme_images/ch4.png)
 
 #### Initial State:
 - The state of a `component` is captured in a variable called `this.state` in the component's class, and should be an object of one or more key-value pairs. Each key is a state variable name and the value is the current value of the variable. It is useful to store anything that affects the rendered view and can change due to any event in the **state**.
