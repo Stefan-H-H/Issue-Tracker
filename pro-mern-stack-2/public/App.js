@@ -39,6 +39,11 @@ var initialIssues = [{
   due: new Date("2018-08-30"),
   title: "Missing bottom border on panel"
 }];
+var sampleIssue = {
+  status: "New",
+  owner: "Pieta",
+  title: "Completion date should be optional"
+};
 
 var IssueRow = /*#__PURE__*/function (_React$Component) {
   _inherits(IssueRow, _React$Component);
@@ -55,6 +60,7 @@ var IssueRow = /*#__PURE__*/function (_React$Component) {
     key: "render",
     value: function render() {
       var issue = this.props.issue;
+      console.log(issue.id);
       return /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", null, issue.id), /*#__PURE__*/React.createElement("td", null, issue.status), /*#__PURE__*/React.createElement("td", null, issue.owner), /*#__PURE__*/React.createElement("td", null, issue.created.toDateString()), /*#__PURE__*/React.createElement("td", null, issue.effort), /*#__PURE__*/React.createElement("td", null, issue.due ? issue.due.toDateString() : ""), /*#__PURE__*/React.createElement("td", null, issue.title));
     }
   }]);
@@ -97,6 +103,9 @@ var IssueTable = /*#__PURE__*/function (_React$Component3) {
     _this.state = {
       issues: []
     };
+    setTimeout(function () {
+      _this.createIssue(sampleIssue);
+    }, 2000);
     return _this;
   }
 
@@ -115,6 +124,17 @@ var IssueTable = /*#__PURE__*/function (_React$Component3) {
           issues: initialIssues
         });
       }, 500);
+    }
+  }, {
+    key: "createIssue",
+    value: function createIssue(issue) {
+      issue.id = this.state.issues.length + 1;
+      issue.created = new Date();
+      var newIssueList = this.state.issues.slice();
+      newIssueList.push(issue);
+      this.setState({
+        issues: newIssueList
+      });
     }
   }, {
     key: "render",
