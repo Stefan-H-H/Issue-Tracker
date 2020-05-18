@@ -68,13 +68,26 @@ class IssueTable extends React.Component {
 class IssueAdd extends React.Component {
     constructor() {
         super();
-        setTimeout(() => {
-            this.props.createIssue(sampleIssue);
-        }, 2000);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
+
+    handleSubmit(e) {
+        e.preventDefault();
+        const form = document.forms.issueAdd;
+        const issue = {
+            owner: form.owner.value, title: form.title.value, status: "New",
+        }
+        this.props.createIssue(issue);
+        form.owner.value = ""; form.title.value = ""
+    }
+
     render() {
         return (
-            <div>This is a placeholder for a form to add an issue.</div>
+            <form name="issueAdd" onSubmit={this.handleSubmit} >
+                <input type="text" name="owner" placeholder="Owner" />
+                <input type="text" name="title" placeholder="Title" />
+                <button>Add</button>
+            </form>
         );
     }
 }
