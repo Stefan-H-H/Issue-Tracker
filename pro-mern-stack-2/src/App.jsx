@@ -108,17 +108,8 @@ class IssueList extends React.Component {
     }
 
     async createIssue(issue) {
-        // issue.id = this.state.issues.length + 1;
-        // issue.created = new Date();
-        // const newIssueList = this.state.issues.slice();
-        // newIssueList.push(issue);
-        // this.setState({issues: newIssueList});
-        const query = `mutation {
-            issueAdd(issue:{
-                title: "${issue.title}",
-                owner: "${issue.owner}",
-                due: "${issue.due.toISOString()}",
-            }) {
+        const query = `mutation issueAdd($issue: IssueInputs!) {
+            issueAdd(issue: $issue) {
                 id
             }
         }`
@@ -126,7 +117,7 @@ class IssueList extends React.Component {
         const response = await fetch('/graphql', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({query})
+            body: JSON.stringify({query, variables: {issue}})
         });
         this.loadData();
     }
