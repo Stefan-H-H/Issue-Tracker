@@ -67,7 +67,7 @@ function issueValidate(issue) {
         errors.push('Field "owner" is required when status is "Assigned');
     }
     if (errors.length > 0) {
-        throw new UserInputError('Invalid input(s)', errors);
+        throw new UserInputError('Invalid input(s)', {errors});
     }
 }
 
@@ -84,7 +84,7 @@ const server = new ApolloServer({
     typeDefs: fs.readFileSync('./server/schema.graphql', 'utf-8'),
     resolvers,
     formatError: error => {
-        console.error(error);
+        console.log(error);
         return error;
     }
 });
