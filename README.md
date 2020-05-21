@@ -1,6 +1,89 @@
 # StefanHristov-Book  
 Work through Pro MERN Stack 2nd Ed
 ---
+## Chapter 5
+### Summary & Functionality Added:
+
+
+#### Express:
+- **Routing** - At the heart of Express is a router, which takes a client request, matches it against any routes that are present, and executes the handler function that is associated with that route. The handler function is expected to generate the appropriate response. 
+    -  A route specification consists of:
+        - An HTTP method(GET, POST, etc).
+        - a path specification that matches the request URI
+        - and the route handler
+        - Instead of `app.use()`, `app.get()` has to be used in order to match teh GET HTTP method.
+- **Request Matching** - When a request is recieved, the first thing that Express does is match the request to one of the routes. The request method is matched against the route's method.
+- **Route Parameters** - Route parameteres are named segments in the path specification that match a part of the URL. If a match occurs, the value in that part of the URL is supplied as a vaariable in the request object. Note that the query string is not part of the path specification, so you cannot have different handlesrs for different parameters or values of the query string.
+- **Route Lookup** - The router does not try to find a best match, it tiest ot match all routes *in the order* in which they are installed, and the first match is used. This means that the routes should be defined in the order of priority. Typically, you should be careful to add the more generic pattern after the specific paths in case a request can match both.
+- **Handle Function** - Once a route is matched, the handler function is called. The paramaters passed to the handler are a request object and a response object.
+- **Request Object** - Any aspect of the request can be inspected using the request objects properties and methods.
+- **Response Object** - The response object is used to construct and send a response. Note that if no response is sent, the client waits indefinitely.
+- **Middleware** - An *Express* application is a series of middleware function calls. Middleware functions are those taht have access to the request object (`req`), the response object (`res`), and the next middleware function in the application's request-response cycle. `express.static()` is the only built-in middleware (other than the router) available as part of *Express*. Third-party middleware is availble via `npm`.
+#### REST API:
+- REST is short for **Respresentational State Transfer**, and is an architectural pattern for application programming interfaces (APIs).
+- The APIs are resource based (instead of action based). Resources are accessed based on a Unifrom Resource Identifier (URI), known as an endpoint. As such, resources are nouns, not verbs.
+- In a REST API, to access an manipulate the resources, on uses HTTP methods. While resoureces were nouns, the HTTP methods are the verbs that operate on them.
+- REST APIs have a few issues laid out on **pg 90**. The author states that given these issues, most REST API implementations are more REST-*like*, rather than strict REST.
+#### GraphQL:
+- In GraphQL, the properties of an object that need to be returned **must** be specified.
+- GraphQL API servers hae a *single* endpoint in contrast to one edpoint per resource in REST. This makes it possible to use a single query for *all* the date athat is required by the client.
+- GraphQL is a strongly typed language. All fields and argument have a type agains which both quieries and results can be validated and give descriptive error message. The advantage of a strongly typed system is that it prevents errors.
+- For Javascript on the back-end, there is a reference implementation of Graph QL callsed GraphQL.js. To tie this to *Express* and enable HTTP requests to be the transport mechanism for API calls, there is a package called `express-graphql`.
+#### The About API:
+- Here we create a demo API called about that simply returns a String.
+- The GraphQL schema language requires us to define each type using the `type` keyword followed by the name of the type, followed by its specification within curly braces.
+- GraphQL schema has two special types that are entry points into the type system, called `Query` and `Mutation`. `Query` fields are expected to return *existing state*, whereas `Mutation` fields are expected to change something in the application's data. Note that query fields are executed in parallel, and mutation fields are executed in series.
+- Best practice to implement READ operation under `Query` and things taht modify the system under `Mutation.`
+- GraphQL type system supports the following basic data types:
+    - `Int`: Signed 32-bit integer.
+    - `Float`: A signed doubl-precision floating-point value.
+    - `String`: A UTF-8 character sequence.
+    - `Boolean`: `true` or `false`.
+    - `ID`: This representa a unique identifier, serialized as a string. Using an `ID` instead of a string indicates that it is not intended to be human-readable.
+- The Schema Langauge has a provision to indicate whether a value is optional or mandatory. By default, all values are optional. All those that require a value are defined by adding an exclamation character (`!`) after the type.
+- `resolvers` are function are "handler" functions that are called when fields are accesssed. They resolve a query to a field with real values.
+- All resolver functions are supplied four arguments like this:
+    `fieldName(obj, args, context, info)`
+    see **pg. 95** for description of each argument.
+- The tool called *Playground* is available by defalut as part of the Apollo Server and can be accessed by simply browswing the API endpoint. This allows developers to explore the API with a Playground UI.
+- In the GraphQL Playground, the query language has to be used to write a query on the left hand side of the window. It is JSON-like, but it is not JSON. The Playground queries the schema from the server when the "play" button is hit. Results are shown on the right hand side.
+#### GraphQL Schema File
+- Here we move teh schema definitions out of `server.js` and into their own file `schema.graphql`.
+- we read the typdefs from `schema.grahql` into the `server.js` file using the `fs` module and the `readFileSync` function.
+- Lastly, we modify the `package.json` file to make sure the script for `npm start` watches changes to any `.graphql` files, using the `-e` option for `nodemon`.
+#### The List API:
+- Here we implement an API to fetch a list of issues.
+- The GraphQL way to specify a list of another type is to enclose it within square brackets.
+#### List API Integeration:
+- Here we replace the `loadData()` method in `IssueList` React component with an `async` method that constructs a GraphQL query to fetch data from the server.
+#### Cusom Scalar Types:
+- JSON does not have a `Date` type, thus tranferring data using JSON in API calls also must convert the date to and form strings.
+- To be able to use a custom scalar type, the following has to be done:
+    1. Define a type for the scalar using the `scalar` keyword instead of the `type` keyword in the schema.
+    2. Add  top-level resolver for all scalar types, which handles both serialization (on the way out) as well as parsing (on the way in) via class methods.
+- The class method `serialize()` is will be called to convert a date value to a string.
+- A *reviver* function is used in `App.jsx` to convert the string to the native `Date` type. The `reviver` function is passed to the JSON `parse()` function. A reviver function is one that is called for parsing all values, and the JSON parser gives it a chance to modify what the default parser will do.
+#### The Create API:
+- Here we implemnt an API for creating a new issue in th server, which will be appended to the list of issues in the server's memory.
+- input types require a separate schemea definition in GraphQL. The `input` keyword is used for defining input types.
+- `""` Double quotes are used for documentation purposes that are shown as part of the schema explorer. In order for the documentation to appear in the schema explorer, the String must be a comment above a field within the `.graphql` file.
+- It is typically good practice to return values generated at the server.
+- Since `IssueInputs` does have a `GraphQLDate` type, parsers for recieving date values must be implemented. Specifically, `parseValue` and `parseLiteral`.
+- `parseLiteral` is called in the case where the field is specified in-place in the query. The method is called with an argument `ast` which contains a `kind` property and a `value` property. The `kind` property indicates the type of token the parser found (float, integer, or string).
+- A return value of `undefined` indicates to GraphQL library that the type could not be converted, and it will be treated as an error.
+- A defalut value can be defined in schema by adding an `=` sign and the defalut value after the type specification. e.g. `status: String = "New"`.
+### Create API Integration:
+- Here we fully integrate the functionality fo adding an issue to our issue list and implement a change in the `handleSubmit()` method for class IssueAdd so that a due date 10 days from today automatically gets generated.
+#### Query Variables:
+
+
+
+
+### Errors & Issues:
+- Initial setup of ApolloSever was repeatedly unsuccessful from **pg. 97**. After checking my work repeatedly, and running `npm  start`, I kept recieving an error that read as follows: `Error: Cannot find module 'graphql/validation/rules/PossibleTypeExtensions'`. After cross referencing the author's repo I noted that his dependencies for `apollo-server-express` were set to version `2.3.1`, where as mine were only at `2.13.1`. I ran `npm install graphql@0 apollo-server-express@2.3` to force install the apollo server dependency to version `2.3+` instead, which solved the problem. 
+
+
+
 ## Chapter 4
 ### Summary & Functionality Added:
 This chapter explores how React handles model information using **state** and **properties**. This chapter walkthrough allows us to add the functionality of being able to add and create new issues interactively via a form with a submission button.
