@@ -24,7 +24,34 @@ Work through Pro MERN Stack 2nd Ed
     - `db.<collection>.insertOne()` - a method to insert a new document in the named `<collection>` . A collection is referenced as a property of the global `db` object. E.g. - The collection called `employees` can be refered to as `db.employees`.
     - `db.<collection>.find()` method when used without any arguments lists all the documents in the collection, but it is not displayed in readable-friendly way. Appending the `.pretty()` method on the end will format the output in a more legible manner. The `find()` method returns a `cursor` object that may be iterated over.
     - While Node.js uses the `console.log()` method for printing objects to the console, the mongo shell uses `print()` for the same purpose, but only prints strings. Objects either need to be converted to strings before printing useing `tojson()` or use another method called `printjson()`, which prints objects as JSON.
-    #### MongoDB CRUD Operations:
+#### MongoDB CRUD Operations:
+- `db.<collection>.drop()` -  a convenient method that a collect object can use to erase itself.
+- **Create**:
+    - If one attempts to insert a document with an `_id` already in use, a `WriteError` will result  due to a duplicate key.
+    - The `_id` field is a primar key and is expected to be unique, regarldess of wheter it is auto-generated or supplied in the document.
+    - It is best to let MongoDB auto-generate the `_id`.
+    - The `db.<collection>.insertMany()` method can be used to insert multiple documents in a single command.
+- **Read**:
+    - the `find()` method two arguments that allows us to retrieve a subset of documents instead of a full list. The first argument is a filter to apply to the list of documents, and the second is a projection ( a specification of which fields to retrieve). The *filter* is an object where the property name is the field to filter on, and the value is the value that it needs to match. e.g. `{id: { $eq: 1} }`. General format of a asingle element in the filter is `fieldname: { operator: value }`. If multople fields are specified, then all have to match (equivalent to *and* operation).
+    - The `createIndex()` method is used wanting to create an index on a particular field. It takes an argument specifiying the fields taht form the index. The second argument to `createIndex()` is an object that contains various attributes of the index, one of them specifying whether the index is unique.
+- **Projection**:
+    - A projection specifies which fields to include or exclude in the result. The format of this specification is an object with one or more field names as the key and the values 0 or 1, to indicate inclusion or exclusion. The `_id` field is an exception, it is always included unless you specify a 0. e.g. `db.employees.find({}, { _id: 0, 'name.first': 1, age: 1})`
+- **Update**:
+    - There are two methods, `updateOne()` and `updateMany()` typically used for modifying a document. `updateOne()` stops after finding and updating the first matching document.
+    - The update specification is an object with a series of `$set` properties whose values indicate another object, which specifies the field and its new value. e.g. `db.employees.updateOne({ id: 2}, { $set: {age: 23 } })`.
+    - The `updateMany()` method has the same format as `updateOne()` but the effect is to **all** documents that match will be modified.
+    - There is a method called `replaceOne()`, which instead of modifying a document, it replaces the existing document with a new one. The `_id` field is not modified as a result of the replacement.
+- **Delete**:
+    - `deleteOne()` and `deleteMany()` can be both used to remove document(s) from the collection. The method takes a filter and deletes the matching document.
+    - The `count()` method on a collection can tell us how many documents it contains.
+- **Aggregate**:
+- The `aggregate()` method can be used to provide a summary or an aggregation based on the documents in a collection.
+- The `aggregate()` method operates as a pipeline. Every stage of the pipeline takes the input from the result of the previous stage and operates per its specification to result in a new modified set of documents.
+- Here's an example of an aggregate that aggregates the total age for different organizations: 
+`> db.employees.aggregate([ 
+{$group: {_id: '$organization', total_age: {$sum: '$age' } } }
+])`
+    
     
 
 ### Errors & Issues:
