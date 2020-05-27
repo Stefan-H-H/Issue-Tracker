@@ -3,7 +3,7 @@ Work through Pro MERN Stack 2nd Ed
 ---
 Work through *Pro MERN Stack* (2nd Ed.)
 
-This is my repository for the project described in the book *Pro MERN Stack* (2nd Ed.) by Vasan Subramanian. Notes general notes that I thought would be beneficial for reference to myself, as well as any errors or issues encountered while working throughout the book.
+This is my repository for the project described in the book *Pro MERN Stack* (2nd Ed.) by Vasan Subramanian. Notes included are general notes that I thought would be beneficial for reference. Notes also include any errors or issues encountered while working throughout the book.
 
 ---
 ## Chapter 6
