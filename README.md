@@ -1,8 +1,28 @@
 # StefanHristov-Book  
 Work through Pro MERN Stack 2nd Ed
 ---
+Work through *Pro MERN Stack* (2nd Ed.)
+
+This is my repository for the project described in the book *Pro MERN Stack* (2nd Ed.) by Vasan Subramanian. Notes general notes that I thought would be beneficial for reference to myself, as well as any errors or issues encountered while working throughout the book.
+
+---
 ## Chapter 6
 ### Summary & Functionality Added:
+In this chapter we performed a local installation of MongoDB and `mongo` shell to interact with a MongoDB server. The purpose of this chapter is to replace the previous array of issues in the Express server's memory that was previously used as the database, and instead use a MongoDB database to implement read and write functionality to and from the issues list from the MongoDB database.
+
+**A Few Notes for MongoDB & Mongo Shell**:
+- To *start* and run MongoDB as a MacOS service, issue the following command at the command line:
+`brew services start mongodb-community@4.2`
+- To *stop* the `mongod` process running as a macOS service, issue the following command:
+`brew services stop mongod-community@4.2`
+- To verify that MongoDB is running, search `mongod` in your running processes at the command line:
+`ps aux | grep -v grep | grep mongod`
+- To *begin* using MongoDB, connect a mongo shell to the running instance. Issue the following to start the mongo shell:
+`mongo`
+- To *stop* the mongo shell, a keyboard interrupt `Ctrl+C` can be used.
+
+
+![ch06](/readme_images/ch6.png)
 
 ### Chapter 6 Notes:
 
@@ -11,29 +31,29 @@ Work through Pro MERN Stack 2nd Ed
 - A document is a data structure composed of field and value pairs. The values of fields may include objects, arrays, arrays of objects, etc., as deeply nested as need be.
 - MongoDB document has support not only for primitive data type (boolean, numbers, and string), but also for common data types such as dates, timestamps, regular expressions, and binary data.
 - A *collection* is like a table in a relational database: it is a set of documents.
-- A primary key is mandated in MongoDB, and it has a reserved field name `_id`. If the `_id` field is not supplied when creating a document, MongoDB creates this field and auto-generates a unique key for every document. Most ofoten, the uto-generated ID can be used. MongoDB uses a special data type called the `ObjectId` for the primary key.
-- The MongoDB query language is made up of *methods* to achieve various operations. All methods operate on a collection and take parameters as JavaScript objects that specify the details of the operation. For querying, the paramaters are a query filter and a list of fields to return - called a **projection**.
+- A primary key is mandated in MongoDB, and it has a reserved field name `_id`. If the `_id` field is not supplied when creating a document, MongoDB creates this field and auto-generates a unique key for every document. Most often, the auto-generated ID can be used. MongoDB uses a special data type called the `ObjectId` for the primary key.
+- The MongoDB query language is made up of *methods* to achieve various operations. All methods operate on a collection and take parameters as JavaScript objects that specify the details of the operation. For querying, the parameters are a query filter and a list of fields to return - called a **projection**.
 - Installed MongoDB on my computer by following instructions posted here: https://docs.mongodb.com/manual/tutorial/install-mongodb-on-os-x/
 - **Mongo Shell**:
     - The mongo shell is an interactive JavaScript shell, similar to the Node.js shell.
     - mongo shell documentation can be accessed at: https://docs.mongodb.com/manual/mongo
-    - `show databases` - a command that will show the current available databases adn the storage occupied by them.
+    - `show databases` - a command that will show the current available databases and the storage occupied by them.
     - `db` - a command used to identify the current database in use.
     - `show collections` - a command used to see what collections exist in the database in use.
     - `use <name>` - a command used to switch to a new database called `<name>` instead of the default database.
-    - `db.<collection>.insertOne()` - a method to insert a new document in the named `<collection>` . A collection is referenced as a property of the global `db` object. E.g. - The collection called `employees` can be refered to as `db.employees`.
+    - `db.<collection>.insertOne()` - a method to insert a new document in the named `<collection>` . A collection is referenced as a property of the global `db` object. E.g. - The collection called `employees` can be referred to as `db.employees`.
     - `db.<collection>.find()` method when used without any arguments lists all the documents in the collection, but it is not displayed in readable-friendly way. Appending the `.pretty()` method on the end will format the output in a more legible manner. The `find()` method returns a `cursor` object that may be iterated over.
-    - While Node.js uses the `console.log()` method for printing objects to the console, the mongo shell uses `print()` for the same purpose, but only prints strings. Objects either need to be converted to strings before printing useing `tojson()` or use another method called `printjson()`, which prints objects as JSON.
+    - While Node.js uses the `console.log()` method for printing objects to the console, the mongo shell uses `print()` for the same purpose, but only prints strings. Objects either need to be converted to strings before printing using `tojson()` or use another method called `printjson()`, which prints objects as JSON.
 #### MongoDB CRUD Operations:
 - `db.<collection>.drop()` -  a convenient method that a collect object can use to erase itself.
 - **Create**:
     - If one attempts to insert a document with an `_id` already in use, a `WriteError` will result  due to a duplicate key.
-    - The `_id` field is a primar key and is expected to be unique, regarldess of wheter it is auto-generated or supplied in the document.
+    - The `_id` field is a primary key and is expected to be unique, regardless of whether it is auto-generated or supplied in the document.
     - It is best to let MongoDB auto-generate the `_id`.
     - The `db.<collection>.insertMany()` method can be used to insert multiple documents in a single command.
 - **Read**:
-    - the `find()` method two arguments that allows us to retrieve a subset of documents instead of a full list. The first argument is a filter to apply to the list of documents, and the second is a projection ( a specification of which fields to retrieve). The *filter* is an object where the property name is the field to filter on, and the value is the value that it needs to match. e.g. `{id: { $eq: 1} }`. General format of a asingle element in the filter is `fieldname: { operator: value }`. If multople fields are specified, then all have to match (equivalent to *and* operation).
-    - The `createIndex()` method is used wanting to create an index on a particular field. It takes an argument specifiying the fields taht form the index. The second argument to `createIndex()` is an object that contains various attributes of the index, one of them specifying whether the index is unique.
+    - the `find()` method two arguments that allows us to retrieve a subset of documents instead of a full list. The first argument is a filter to apply to the list of documents, and the second is a projection ( a specification of which fields to retrieve). The *filter* is an object where the property name is the field to filter on, and the value is the value that it needs to match. e.g. `{id: { $eq: 1} }`. General format of a single element in the filter is `fieldname: { operator: value }`. If multiple fields are specified, then all have to match (equivalent to *and* operation).
+    - The `createIndex()` method is used wanting to create an index on a particular field. It takes an argument specifying the fields that form the index. The second argument to `createIndex()` is an object that contains various attributes of the index, one of them specifying whether the index is unique.
 - **Projection**:
     - A projection specifies which fields to include or exclude in the result. The format of this specification is an object with one or more field names as the key and the values 0 or 1, to indicate inclusion or exclusion. The `_id` field is an exception, it is always included unless you specify a 0. e.g. `db.employees.find({}, { _id: 0, 'name.first': 1, age: 1})`
 - **Update**:
@@ -51,10 +71,27 @@ Work through Pro MERN Stack 2nd Ed
 `> db.employees.aggregate([ 
 {$group: {_id: '$organization', total_age: {$sum: '$age' } } }
 ])`
-    
-    
+#### MongoDB Node.js Driver:
+- `npm install mongodb@3` was run to install and use a low-level driver. This is the Node.js driver that allows one to connect and interact with the MongoDB Server.
+- A file `trymongo.js` was created to play around with different methods and interact with the MongoDB server.
+- A URL identifies which database to connect to and the `connect()` method is used to connect make a connection to the database server.
+- The `connect()` method is an asynchronous method and needs a call back to receive the result of the connection.
+- `client.close()` is a method se to close the connection when things are finished. If this method is not executed, the Node.js program will not exit, because the connection object is waiting to be used and listening to a socket.
+- Instead of using a callback paradigm, due to improvements in ES2017 and Node.js version 7.6, there is full support for the async/await paradigm to be used and is recommended. By using the async/await paradigm, all asynchronous calls with callbacks can be replaced with a call to the same method, but without supplying a callback. Using `await` before the method call will simulate a synchronous call by *waiting* for the call to complete and return the results. It makes things much easier to read and follow.
+#### Schema Initialization:
+- The mongo shell is an interactive shell and also a scripting environment.
+- Here we create `init.mongo.js` which serves as a schema initialization script in the `script` directory.
+- If at any point we wish to reset the database to a pristine state, the command `mongo issuetracker scripts/init.mongo.js` can be run at the command line from the bash terminal.
+#### Reading From MongoDB:
+- Here we change the List API to read from the MongoDB database rather than the in-memory array of issues in the server.
+- The application is to maintain a connection with the MongoDB server so we can reuse it perform many operations, triggered from within API calls.
+- The connection object is in fact a connection pool. It automatically determines the best thing to do: reuse an existing TCP connection, reestablish a new connection when the connection is broken, tec. Using a global variable (at least reusing the connection object) is recommended usage.
+#### Writing to MongoDB:
+- Here we change the Create API to create issues that use the MongoDB database to persist newly created issues.
+- A `counter` collection is used to store a current count of issues that can be used to generate unique `id` fields at the time of creation of a new issue by using the `findOneAndUpdate()` method.
 
 ### Errors & Issues:
+- Received a `DeprecationWarning` whenever running the MongoDB server. 
 
 
 ## Chapter 5
@@ -282,3 +319,4 @@ Served as an introduction to how React applications can be built. Provides an in
  - Listing 2-1 should read  `ReactDOM.render(element, document.getElementByID('contents'));`. The listing has a typo and pass the argument `content` instead of `contents` inside the `getElementByID()` method. The typo causes the method to return `null` and not properly render *"Hello World"* because no element with that ID exists.
  - For build time JSX transformation, babel tools needed to be installed. I had an issue with installation. Resolved after realizing that `npm install --save-dev @babel/core@7 @babel/cli@7` needed to be executed within the `src` folder.
  - Listing 2-7 is missing an opening `<` and should read  `<script src="App.js></script>`.
+

@@ -83,7 +83,7 @@ async function issueAdd(_, {issue}) {
     issueValidate(issue);
     issue.created = new Date();
     issue.id = await getNextSequence('issues')
-    
+
     const result = await db.collection('issues').insertOne(issue)
     const savedIssue = await db.collection('issues').findOne({_id: result.insertedId});
     return savedIssue;
@@ -92,7 +92,7 @@ async function issueAdd(_, {issue}) {
 async function connectToDb() {
     const client = new MongoClient(url, {useNewUrlParser: true});
     await client.connect();
-    console.log('Connected to MongoDb at', url);
+    console.log('Connected to MongoDB at', url);
     db = client.db();
 }
 
