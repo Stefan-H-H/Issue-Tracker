@@ -1,6 +1,35 @@
 # StefanHristov-Book  
 Work through Pro MERN Stack 2nd Ed
 ---
+## Chapter 6
+### Summary & Functionality Added:
+
+### Chapter 6 Notes:
+
+#### MongoDB Basics:
+- MongoDB is a *document* database, which means that the equivalent of a record is a document, or an object.
+- A document is a data structure composed of field and value pairs. The values of fields may include objects, arrays, arrays of objects, etc., as deeply nested as need be.
+- MongoDB document has support not only for primitive data type (boolean, numbers, and string), but also for common data types such as dates, timestamps, regular expressions, and binary data.
+- A *collection* is like a table in a relational database: it is a set of documents.
+- A primary key is mandated in MongoDB, and it has a reserved field name `_id`. If the `_id` field is not supplied when creating a document, MongoDB creates this field and auto-generates a unique key for every document. Most ofoten, the uto-generated ID can be used. MongoDB uses a special data type called the `ObjectId` for the primary key.
+- The MongoDB query language is made up of *methods* to achieve various operations. All methods operate on a collection and take parameters as JavaScript objects that specify the details of the operation. For querying, the paramaters are a query filter and a list of fields to return - called a **projection**.
+- Installed MongoDB on my computer by following instructions posted here: https://docs.mongodb.com/manual/tutorial/install-mongodb-on-os-x/
+- **Mongo Shell**:
+    - The mongo shell is an interactive JavaScript shell, similar to the Node.js shell.
+    - mongo shell documentation can be accessed at: https://docs.mongodb.com/manual/mongo
+    - `show databases` - a command that will show the current available databases adn the storage occupied by them.
+    - `db` - a command used to identify the current database in use.
+    - `show collections` - a command used to see what collections exist in the database in use.
+    - `use <name>` - a command used to switch to a new database called `<name>` instead of the default database.
+    - `db.<collection>.insertOne()` - a method to insert a new document in the named `<collection>` . A collection is referenced as a property of the global `db` object. E.g. - The collection called `employees` can be refered to as `db.employees`.
+    - `db.<collection>.find()` method when used without any arguments lists all the documents in the collection, but it is not displayed in readable-friendly way. Appending the `.pretty()` method on the end will format the output in a more legible manner. The `find()` method returns a `cursor` object that may be iterated over.
+    - While Node.js uses the `console.log()` method for printing objects to the console, the mongo shell uses `print()` for the same purpose, but only prints strings. Objects either need to be converted to strings before printing useing `tojson()` or use another method called `printjson()`, which prints objects as JSON.
+    #### MongoDB CRUD Operations:
+    
+
+### Errors & Issues:
+
+
 ## Chapter 5
 ### Summary & Functionality Added:
 This chapter introduced more specifics of handling server-side requests. The author speaks at greater detail about Express as the web server frame work built on top of Node, and GraphQL as a query language used to describe requests from a web client to a web server. It is used to load data from a server to a client.
@@ -14,6 +43,7 @@ At the conclusion of the chapter the following functionality is added to the Iss
     
     ![ch05](/readme_images/ch5.png)
 
+### Chapter 5 Notes:
 #### Express:
 - **Routing** - At the heart of Express is a router, which takes a client request, matches it against any routes that are present, and executes the handler function that is associated with that route. The handler function is expected to generate the appropriate response. 
     -  A route specification consists of:
@@ -116,6 +146,7 @@ This chapter explores how React handles model information using **state** and **
 
 ![ch04](/readme_images/ch4.png)
 
+### Chapter 4 Notes:
 #### Initial State:
 - The state of a `component` is captured in a variable called `this.state` in the component's class, and should be an object of one or more key-value pairs. Each key is a state variable name and the value is the current value of the variable. It is useful to store anything that affects the rendered view and can change due to any event in the **state**.
 #### Async State Initialization:
