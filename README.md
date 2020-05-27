@@ -12,12 +12,16 @@ In this chapter we performed a local installation of MongoDB and `mongo` shell t
 
 **A Few Notes for MongoDB & Mongo Shell**:
 - To *start* and run MongoDB as a MacOS service, issue the following command at the command line:
+
 `brew services start mongodb-community@4.2`
 - To *stop* the `mongod` process running as a macOS service, issue the following command:
+
 `brew services stop mongod-community@4.2`
 - To verify that MongoDB is running, search `mongod` in your running processes at the command line:
+
 `ps aux | grep -v grep | grep mongod`
 - To *begin* using MongoDB, connect a mongo shell to the running instance. Issue the following to start the mongo shell:
+
 `mongo`
 - To *stop* the mongo shell, a keyboard interrupt `Ctrl+C` can be used.
 
@@ -65,12 +69,12 @@ In this chapter we performed a local installation of MongoDB and `mongo` shell t
     - `deleteOne()` and `deleteMany()` can be both used to remove document(s) from the collection. The method takes a filter and deletes the matching document.
     - The `count()` method on a collection can tell us how many documents it contains.
 - **Aggregate**:
-- The `aggregate()` method can be used to provide a summary or an aggregation based on the documents in a collection.
-- The `aggregate()` method operates as a pipeline. Every stage of the pipeline takes the input from the result of the previous stage and operates per its specification to result in a new modified set of documents.
-- Here's an example of an aggregate that aggregates the total age for different organizations: 
-`> db.employees.aggregate([ 
-{$group: {_id: '$organization', total_age: {$sum: '$age' } } }
-])`
+    - The `aggregate()` method can be used to provide a summary or an aggregation based on the documents in a collection.
+    - The `aggregate()` method operates as a pipeline. Every stage of the pipeline takes the input from the result of the previous stage and operates per its specification to result in a new modified set of documents.
+    - Here's an example of an aggregate that aggregates the total age for different organizations: 
+    `> db.employees.aggregate([ 
+    {$group: {_id: '$organization', total_age: {$sum: '$age' } } }
+    ])`
 #### MongoDB Node.js Driver:
 - `npm install mongodb@3` was run to install and use a low-level driver. This is the Node.js driver that allows one to connect and interact with the MongoDB Server.
 - A file `trymongo.js` was created to play around with different methods and interact with the MongoDB server.
