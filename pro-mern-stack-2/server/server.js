@@ -3,7 +3,17 @@ const express = require('express');
 const { ApolloServer, UserInputError } = require('apollo-server-express');
 const { GraphQLScalarType } = require('graphql');
 const { Kind } = require('graphql/language')
+const {MongoClient} = require('mongodb');
 
+
+const url = 'mongodb://localhost/issuetracker';
+// Atlas URL - replace UUU with user, PPP with password, XXX with hostname
+// const URL = 'mongodb+srv://UUU:PPP@clustero-XXX.mongodb.net/issuetracker?retryWrites=true'
+
+// mLab URL - replace UUU with user, PPP with password, XXX with hostname
+// const url - 'mongodb://UUU:PPP@XXX.mlab.com:33533/issuetracker';
+
+let db;
 
 let aboutMessage = "Issue Tracker API v1.0";
 
@@ -54,8 +64,9 @@ function setAboutMessage(_, { message }) {
     return aboutMessage = message;
 }
 
-function issueList() {
-    return issuesDB;
+async function issueList() {
+    const issues = await db.collection('issues').find({}).toArray();
+    return issues;
 }
 
 function issueValidate(issue) {
@@ -77,6 +88,13 @@ function issueAdd(_, {issue}) {
     issue.id = issuesDB.length + 1;
     issuesDB.push(issue);
     return issue
+}
+
+async function connectToDb() {
+    const client = new MongoClient(url, {useNewUrlParser: true});
+    await client.connect();
+    console.log('Connected to MongoDb at', url);
+    db = client.db();
 }
 
 
@@ -102,6 +120,13 @@ server.applyMiddleware({ app, path: '/graphql' });
 
 // listen() method starts server and has it serve HTTP requests.
 // starts teh server and waits eternally for requests.
-app.listen(3000, function() {
-    console.log("App started on port 3000");
-});
+(async function() {
+    try {
+        await connectToDb();
+        app.listen(3000, function() {
+            console.log('App started on port 3000');
+        });
+    } catch (err) {
+        console.log('ERROR', err);
+    }
+})()
