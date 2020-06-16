@@ -90,7 +90,7 @@ async function issueAdd(_, {issue}) {
 }
 
 async function connectToDb() {
-    const client = new MongoClient(url, {useNewUrlParser: true});
+    const client = new MongoClient(url, {useNewUrlParser: true, useUnifiedTopology: true});
     await client.connect();
     console.log('Connected to MongoDB at', url);
     db = client.db();
