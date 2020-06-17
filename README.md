@@ -9,7 +9,7 @@ This is my repository for the project described in the book *Pro MERN Stack* (2n
 
 ## Chapter 7
 ### Summary & Functionality Added:
-This chapter is centered around making changes that improve overall scalability of the project and workflow by focusing on changing the overall architecture of the project and implementing the use of ESLint to enforce good and consisten code style. No new application functionality was added in this chapter. That said, we changed the architecture of the project, by splitting the one (1) original server into two (2) -- an API Server, and a separate UI Server, each responsible for their own functions. Additionaly, ESLint is used to add checks and for  adhereing to coding standars, best practices, and validations.
+This chapter is centered around making changes that improve overall scalability of the project and workflow by focusing on changing the overall architecture of the project and implementing the use of ESLint to enforce good and consistent code style. No new application functionality was added in this chapter. That said, we changed the architecture of the project, by splitting the one (1) original server into two (2) -- an API Server, and a separate UI Server, each responsible for their own functions. Additionally, ESLint is used to add checks and for  adhering to coding standards, best practices, and validations.
 
 ![ch07](/readme_images/ch7-api.png)
 ![ch07](/readme_images/ch7-ui.png)
@@ -17,25 +17,25 @@ This chapter is centered around making changes that improve overall scalability 
 ### Chapter 7 Notes:
 
 #### UI Server:
-- To date, the Expres server was serving static content, but alsow served API calls.
+- To date, the Express server was serving static content, but also served API calls.
 - In this section, directories and file names were reconfigured such that the two functions previously performed by one server is split out and performed by two servers. One server that serves static content (**UI Server**), and one that hosts just the API (**API Server**).
-- For development purposes, we run the UI and API Servers on the same coputer, but on different ports. The ports are as follows:
+- For development purposes, we run the UI and API Servers on the same computer, but on different ports. The ports are as follows:
     - API Server: port 3000
     - UI Server: port 8000
 - The API server will now be responsible for handling only the API requests and respond only to URLs matching `/graphql` in the path.
 - The UI Server will now be responsible for contain the static middleware and serve all static content.
 #### Multiple Environments:
 - In this section rather than predetermine the ports and MongoDB URL based on possible deployment targets such as development, staging, production, we keep the variables flexible so that they can be set to anything at run time.
-- We utilize a `dotenv` package to allow us to set up a configuration `.env` file for both the UI and API Servers. The package allows us to convert variables stored in a configuration file into environment variables. This way, in our code, we only deal with environmental variables, allowing us the flexibility of having the environment variables be supplied via real environment variables or via a conguration file.
+- We utilize a `dotenv` package to allow us to set up a configuration `.env` file for both the UI and API Servers. The package allows us to convert variables stored in a configuration file into environment variables. This way, in our code, we only deal with environmental variables, allowing us the flexibility of having the environment variables be supplied via real environment variables or via a configuration file.
 - It is recommended that `.env` file not be checked into any repository.
 -Note that the actual environment variables take precedence over (or override) the same variable defined in the `.env` file.
 #### Proxy-Based Architecture:
-- Per the Network tab of the Developer console, we see that two calls to `/graphql` aree made instead of one. The reason is that the API call is to a host (`http://localhost:3000)` that is different from the origin of the application (`http://localhost:8000`).
+- Per the Network tab of the Developer console, we see that two calls to `/graphql` are made instead of one. The reason is that the API call is to a host (`http://localhost:3000)` that is different from the origin of the application (`http://localhost:8000`).
 - Due to the same-origin policy, requests like this are normally blocked by the browser unless the server specifically allows it.
-- Ths mechanism is called *cross-origin resource sharing* or **CORS** for short.
-- Typically CORS is disabled to protect against malicous attacks.
-- For exploration purposes, we run `npm install http-proxy-middleware@0` in the UI server directory and make a few file changes to the `uiserver.js` and `.env` files. In doing so, we create a proxy such athat the UI Server routes uses a proxy to route any requests to `graphql` to the API Server allowing us an alternate way to make API calls.
-- For the sake of following the book, proxy changes were revereted so that **direct API call mechanism** can be used.
+- This mechanism is called *cross-origin resource sharing* or **CORS** for short.
+- Typically, CORS is disabled to protect against malicious attacks.
+- For exploration purposes, we run `npm install http-proxy-middleware@0` in the UI server directory and make a few file changes to the `uiserver.js` and `.env` files. In doing so, we create a proxy such that the UI Server routes uses a proxy to route any requests to `graphql` to the API Server allowing us an alternate way to make API calls.
+- For the sake of following the book, proxy changes were reverted so that **direct API call mechanism** can be used.
 #### ESLint:
 - Here we install and configure ESLint to help our workflow and help us and our code adhere to conventions, standards and good practices. ESLint is a linter that allows us to define rules we want to follow. 
 - We extend from the base configuration and rule sets defined by the **Airbnb** style guide/configuration. In the `api` directory, since we are only working on the back-end code only, we only  set up the  base configuration from Airbnb for plain JavaScript.
@@ -43,16 +43,16 @@ This chapter is centered around making changes that improve overall scalability 
 - We create a script in the `package.json` file so that we  may run `npm run lint` at the command line to run ESLint and check for errors/warnings that will be displayed at the command line.
 #### ESLint for the Front-End:
 - Here we install and configure ESLint for the `ui` directory like was done for the back-end (`api` directory), but we also include the complete **Airbnb** configuration, which includes the React plugin.
-- We exclude the `public` directory from linting because it incluedes a compiled `App.js` and would result in many errors. The following commmand is issued to include multiple extentions (`--ext`) and ignore the `public` directory (`--ignore-pattern`):
-    - `$ npx eslint . --ext js, jsx --ignore-pattern public`
+- We exclude the `public` directory from linting because it includes a compiled `App.js` and would result in many errors. The following command is issued to include multiple extensions (`--ext`) and ignore the `public` directory (`--ignore-pattern`):
+    - `$ npx eslint . --ext js,jsx --ignore-pattern public`
 - We  also create a script in the `package.json` file so that we  may run `npm run lint` at the command line to run ESLint and check for errors/warnings that will be displayed at the command line.
 #### React PropTypes:
 - Similar to Java which is strongly-typed and provides type validation, the properties being passed from one component to another component can also be validated against a specification.
-- The specification can be suppleid in the form of a static object called `propTypes` in the class, with the name of the property as the key and the validator as the value.
+- The specification can be supplied in the form of a static object called `propTypes` in the class, with the name of the property as the key and the validator as the value.
 -  Use case examples and documentation for PropTypes shown here [https://www.npmjs.com/package/prop-types].
 
 ### Errors & Issues:
-- Upon migrating files to an independent `api` directory as specified on page 175-176 of the textbook,  tha API Server would consistently crash and not work properly. As such, the `package.json` file was changed such that the graphql version was changed from `0.13.2` to `14.2.1`. `npm install` was ran again after making the change, and the API server became operational.
+- Upon migrating files to an independent `api` directory as specified on page 175-176 of the textbook,  the API Server would consistently crash and not work properly. As such, the `package.json` file was changed such that the graphql version was changed from `0.13.2` to `14.2.1`. `npm install` was ran again after making the change, and the API server became operational.
 - On page 178-181 of the textbook, the author's figures reference the environmental variable configuration file name as `sample.env`. The author's online repository declares the environmental configuration file name as `sample.env`. **This is not correct!** The files should be named simply `.env` in order for `nodemon` to be able to properly watch these configuration files, and properly import and set the defined import variables.
 
 
@@ -373,4 +373,5 @@ Served as an introduction to how React applications can be built. Provides an in
  - Listing 2-1 should read  `ReactDOM.render(element, document.getElementByID('contents'));`. The listing has a typo and pass the argument `content` instead of `contents` inside the `getElementByID()` method. The typo causes the method to return `null` and not properly render *"Hello World"* because no element with that ID exists.
  - For build time JSX transformation, babel tools needed to be installed. I had an issue with installation. Resolved after realizing that `npm install --save-dev @babel/core@7 @babel/cli@7` needed to be executed within the `src` folder.
  - Listing 2-7 is missing an opening `<` and should read  `<script src="App.js></script>`.
+
 
