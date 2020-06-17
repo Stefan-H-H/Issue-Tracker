@@ -95,7 +95,7 @@ In this chapter we performed a local installation of MongoDB and `mongo` shell t
 - A `counter` collection is used to store a current count of issues that can be used to generate unique `id` fields at the time of creation of a new issue by using the `findOneAndUpdate()` method.
 
 ### Errors & Issues:
-- Received a `DeprecationWarning` whenever running the MongoDB server. 
+- Received a `DeprecationWarning` whenever running the MongoDB server.  I enabled the `useUnifiedTopology` flag in the MongoClient Constructor to remove the deprecation warning.
 
 
 ## Chapter 5
