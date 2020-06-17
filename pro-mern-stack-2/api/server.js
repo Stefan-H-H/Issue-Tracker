@@ -6,7 +6,7 @@ const { GraphQLScalarType } = require('graphql');
 const { Kind } = require('graphql/language')
 const {MongoClient} = require('mongodb');
 
-
+// database url
 const url = process.env.DB_URL || 'mongodb://localhost/issuetracker';
 
 let db;
@@ -105,6 +105,7 @@ const server = new ApolloServer({
 // Creates & initializes an express application.
 const app = express();
 
+// cross origin resource sharing setting
 const enableCors = (process.env.ENABLE_CORS || 'true') == 'true';
 console.log('CORS setings:', enableCors);
 
@@ -112,6 +113,7 @@ console.log('CORS setings:', enableCors);
 // server.applyMiddleware({ app, path: '/graphql' });
 server.applyMiddleware({ app, path:'/graphql', cors: enableCors });
 
+// Environment variable for port
 const port = process.env.API_SERVER_PORT || 3000;
 
 // listen() method starts server and has it serve HTTP requests.
