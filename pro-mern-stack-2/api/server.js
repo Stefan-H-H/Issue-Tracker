@@ -105,9 +105,12 @@ const server = new ApolloServer({
 // Creates & initializes an express application.
 const app = express();
 
+const enableCors = (process.env.ENABLE_CORS || 'true') == 'true';
+console.log('CORS setings:', enableCors);
+
 // Installs the Apollo Server as a middleare in Express
 // server.applyMiddleware({ app, path: '/graphql' });
-server.applyMiddleware({ app, path:'/graphql' });
+server.applyMiddleware({ app, path:'/graphql', cors: enableCors });
 
 const port = process.env.API_SERVER_PORT || 3000;
 
