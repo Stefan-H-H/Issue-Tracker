@@ -1,4 +1,5 @@
 const fs = require('fs');
+require('dotenv').config();
 const express = require('express');
 const { ApolloServer, UserInputError } = require('apollo-server-express');
 const { GraphQLScalarType } = require('graphql');
@@ -6,12 +7,7 @@ const { Kind } = require('graphql/language')
 const {MongoClient} = require('mongodb');
 
 
-const url = 'mongodb://localhost/issuetracker';
-// Atlas URL - replace UUU with user, PPP with password, XXX with hostname
-// const URL = 'mongodb+srv://UUU:PPP@clustero-XXX.mongodb.net/issuetracker?retryWrites=true'
-
-// mLab URL - replace UUU with user, PPP with password, XXX with hostname
-// const url - 'mongodb://UUU:PPP@XXX.mlab.com:33533/issuetracker';
+const url = process.env.DB_URL || 'mongodb://localhost/issuetracker';
 
 let db;
 
@@ -113,13 +109,16 @@ const app = express();
 // server.applyMiddleware({ app, path: '/graphql' });
 server.applyMiddleware({ app, path:'/graphql' });
 
+const port = process.env.API_SERVER_PORT || 3000;
+
 // listen() method starts server and has it serve HTTP requests.
 // starts teh server and waits eternally for requests.
 (async function() {
     try {
         await connectToDb();
-        app.listen(3000, function() {
-            console.log('API server started on port 3000');
+        app.listen(port, function() {
+            console.log(process.env.API_SERVER_PORT)
+            console.log(`API server started on port ${port}`);
         });
     } catch (err) {
         console.log('ERROR', err);
