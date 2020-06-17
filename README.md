@@ -6,6 +6,56 @@ Work through *Pro MERN Stack* (2nd Ed.)
 This is my repository for the project described in the book *Pro MERN Stack* (2nd Ed.) by Vasan Subramanian. Notes included are general notes that I thought would be beneficial for reference. Notes also include any errors or issues encountered while working throughout the book.
 
 ---
+
+## Chapter 7
+### Summary & Functionality Added:
+This chapter is centered around making changes that improve overall scalability of the project and workflow by focusing on changing the overall architecture of the project and implementing the use of ESLint to enforce good and consisten code style. No new application functionality was added in this chapter. That said, we changed the architecture of the project, by splitting the one (1) original server into two (2) -- an API Server, and a separate UI Server, each responsible for their own functions. Additionaly, ESLint is used to add checks and for  adhereing to coding standars, best practices, and validations.
+
+![ch07](/readme_images/ch7-api.png)
+![ch07](/readme_images/ch7-ui.png)
+
+### Chapter 7 Notes:
+
+#### UI Server:
+- To date, the Expres server was serving static content, but alsow served API calls.
+- In this section, directories and file names were reconfigured such that the two functions previously performed by one server is split out and performed by two servers. One server that serves static content (**UI Server**), and one that hosts just the API (**API Server**).
+- For development purposes, we run the UI and API Servers on the same coputer, but on different ports. The ports are as follows:
+    - API Server: port 3000
+    - UI Server: port 8000
+- The API server will now be responsible for handling only the API requests and respond only to URLs matching `/graphql` in the path.
+- The UI Server will now be responsible for contain the static middleware and serve all static content.
+#### Multiple Environments:
+- In this section rather than predetermine the ports and MongoDB URL based on possible deployment targets such as development, staging, production, we keep the variables flexible so that they can be set to anything at run time.
+- We utilize a `dotenv` package to allow us to set up a configuration `.env` file for both the UI and API Servers. The package allows us to convert variables stored in a configuration file into environment variables. This way, in our code, we only deal with environmental variables, allowing us the flexibility of having the environment variables be supplied via real environment variables or via a conguration file.
+- It is recommended that `.env` file not be checked into any repository.
+-Note that the actual environment variables take precedence over (or override) the same variable defined in the `.env` file.
+#### Proxy-Based Architecture:
+- Per the Network tab of the Developer console, we see that two calls to `/graphql` aree made instead of one. The reason is that the API call is to a host (`http://localhost:3000)` that is different from the origin of the application (`http://localhost:8000`).
+- Due to the same-origin policy, requests like this are normally blocked by the browser unless the server specifically allows it.
+- Ths mechanism is called *cross-origin resource sharing* or **CORS** for short.
+- Typically CORS is disabled to protect against malicous attacks.
+- For exploration purposes, we run `npm install http-proxy-middleware@0` in the UI server directory and make a few file changes to the `uiserver.js` and `.env` files. In doing so, we create a proxy such athat the UI Server routes uses a proxy to route any requests to `graphql` to the API Server allowing us an alternate way to make API calls.
+- For the sake of following the book, proxy changes were revereted so that **direct API call mechanism** can be used.
+#### ESLint:
+- Here we install and configure ESLint to help our workflow and help us and our code adhere to conventions, standards and good practices. ESLint is a linter that allows us to define rules we want to follow. 
+- We extend from the base configuration and rule sets defined by the **Airbnb** style guide/configuration. In the `api` directory, since we are only working on the back-end code only, we only  set up the  base configuration from Airbnb for plain JavaScript.
+- We create an `.eslintrc` file (JSON specification) in the `api` directory which acts as a specification for which rules need to be enabled or disabled. By using the .`eslintrc` file, we make the rules apply to all files in the directory. In order to override rules in a single file, rules can be specified within comments in that file.
+- We create a script in the `package.json` file so that we  may run `npm run lint` at the command line to run ESLint and check for errors/warnings that will be displayed at the command line.
+#### ESLint for the Front-End:
+- Here we install and configure ESLint for the `ui` directory like was done for the back-end (`api` directory), but we also include the complete **Airbnb** configuration, which includes the React plugin.
+- We exclude the `public` directory from linting because it incluedes a compiled `App.js` and would result in many errors. The following commmand is issued to include multiple extentions (`--ext`) and ignore the `public` directory (`--ignore-pattern`):
+    - `$ npx eslint . --ext js, jsx --ignore-pattern public`
+- We  also create a script in the `package.json` file so that we  may run `npm run lint` at the command line to run ESLint and check for errors/warnings that will be displayed at the command line.
+#### React PropTypes:
+- Similar to Java which is strongly-typed and provides type validation, the properties being passed from one component to another component can also be validated against a specification.
+- The specification can be suppleid in the form of a static object called `propTypes` in the class, with the name of the property as the key and the validator as the value.
+-  Use case examples and documentation for PropTypes shown here [https://www.npmjs.com/package/prop-types].
+
+### Errors & Issues:
+- Upon migrating files to an independent `api` directory as specified on page 175-176 of the textbook,  tha API Server would consistently crash and not work properly. As such, the `package.json` file was changed such that the graphql version was changed from `0.13.2` to `14.2.1`. `npm install` was ran again after making the change, and the API server became operational.
+- On page 178-181 of the textbook, the author's figures reference the environmental variable configuration file name as `sample.env`. The author's online repository declares the environmental configuration file name as `sample.env`. **This is not correct!** The files should be named simply `.env` in order for `nodemon` to be able to properly watch these configuration files, and properly import and set the defined import variables.
+
+
 ## Chapter 6
 ### Summary & Functionality Added:
 In this chapter we performed a local installation of MongoDB and `mongo` shell to interact with a MongoDB server. The purpose of this chapter is to replace the previous array of issues in the Express server's memory that was previously used as the database, and instead use a MongoDB database to implement read and write functionality to and from the issues list from the MongoDB database.
@@ -16,7 +66,7 @@ In this chapter we performed a local installation of MongoDB and `mongo` shell t
 `brew services start mongodb-community@4.2`
 - To *stop* the `mongod` process running as a macOS service, issue the following command:
 
-`brew services stop mongod-community@4.2`
+`brew services stop mongodb-community@4.2`
 - To verify that MongoDB is running, search `mongod` in your running processes at the command line:
 
 `ps aux | grep -v grep | grep mongod`
