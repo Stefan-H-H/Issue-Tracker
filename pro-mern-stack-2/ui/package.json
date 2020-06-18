@@ -6,8 +6,8 @@
   "scripts": {
     "start": "nodemon -w uiserver.js -w .env uiserver.js",
     "lint": "eslint . --ext js,jsx --ignore-pattern public",
-    "compile": "babel src --out-dir public",
-    "watch": "babel src --out-dir public --watch --verbose"
+    "compile": "webpack --mode production",
+    "watch": "webpack --watch"
   },
   "author": "shristov22@gmail.com",
   "license": "ISC",
@@ -22,6 +22,7 @@
     "@babel/core": "^7.9.6",
     "@babel/preset-env": "^7.9.6",
     "@babel/preset-react": "^7.9.4",
+    "babel-loader": "^8.1.0",
     "eslint": "^5.16.0",
     "eslint-config-airbnb": "^17.1.1",
     "eslint-config-node": "^4.1.0",
