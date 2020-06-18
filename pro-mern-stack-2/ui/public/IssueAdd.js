@@ -5,6 +5,12 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
+var _react = _interopRequireDefault(require("react"));
+
+var _propTypes = _interopRequireDefault(require("prop-types"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -27,7 +33,6 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
-/* globals React PropTypes */
 var IssueAdd = /*#__PURE__*/function (_React$Component) {
   _inherits(IssueAdd, _React$Component);
 
@@ -61,27 +66,27 @@ var IssueAdd = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "render",
     value: function render() {
-      return /*#__PURE__*/React.createElement("form", {
+      return /*#__PURE__*/_react.default.createElement("form", {
         name: "issueAdd",
         onSubmit: this.handleSubmit
-      }, /*#__PURE__*/React.createElement("input", {
+      }, /*#__PURE__*/_react.default.createElement("input", {
         type: "text",
         name: "owner",
         placeholder: "Owner"
-      }), /*#__PURE__*/React.createElement("input", {
+      }), /*#__PURE__*/_react.default.createElement("input", {
         type: "text",
         name: "title",
         placeholder: "Title"
-      }), /*#__PURE__*/React.createElement("button", {
+      }), /*#__PURE__*/_react.default.createElement("button", {
         type: "submit"
       }, "Add"));
     }
   }]);
 
   return IssueAdd;
-}(React.Component);
+}(_react.default.Component);
 
 exports.default = IssueAdd;
 IssueAdd.propTypes = {
-  createIssue: PropTypes.func.isRequired
+  createIssue: _propTypes.default.func.isRequired
 };
