@@ -6,6 +6,58 @@ Work through *Pro MERN Stack* (2nd Ed.)
 This is my repository for the project described in the book *Pro MERN Stack* (2nd Ed.) by Vasan Subramanian. Notes included are general notes that I thought would be beneficial for reference. Notes also include any errors or issues encountered while working throughout the book.
 
 ---
+## Chapter 8
+### Summary & Functionality Added:
+No additional functionality was added in this chapter. The priority was to further modularize the existing code sourced from `App.jsx` into individual files for React components, and utilize Webpack to assist with bundling and compiling modules to assist with workflow for deployment.
+
+![ch08](/readme_images/ch8.png)
+
+### Chapter 8 Notes:
+
+#### Back-End Modules:
+- In this section of the chapter, the back-end functionality inside `api/server.js` is split into several files: `about.js`, `api_handler.js`, `db.js`, `graphql_date.js`, `issue.js`, and `server.js`.
+- There are two key elements to interact with the module system: `require` and `exports`.
+- The `require()` element is a function that can be used to import symbols from another module. The parameter passed to `require()` is the ID of the module. In Node's implementation, the ID is the name of the module. For packages installed using `npm`, this is the same as the name of the package and the same as the sub-directory where the package's files are installed. For modules within the same application, the ID is the path of the file that needs to be imported.
+- As an example, to import symbols from another file called `other.js` in the same directory, the statement written is as follows: `const other = require('./other.js);` This way whatever is exported by `other.js` will be available in the `other` variable.
+- The main symbol that a file or module exports must be set in a global variable called `module.exports` within that file, and that is the one that can be returned by the function call to `require()`.
+#### Front-End Modules and Webpack:
+- In this section of the chapter we install Webpack,  split App.jsx, and use Webpack to create a bundle for the Front-End modules.
+- Webpack helps workflow by automating the transform and bundle process of JavaScript files that will be used by the browser.
+- Web pack helps to put together multiple files into one or a few bundles of JavaScript that has all the required code that can be included in the HTML file.
+- Webpack is installed as a developer dependency, because the UI server in production has no need for Webpack.
+- Webpack uses ES2015 style imports like this: `import graphQLFetch from './graphQLFetch.js`.
+- Webpack can automatically determine that a file depends on another due to an import statement and include all necessary files in the bundle.
+#### Transform and Bundle:
+- In this section of the chapter, we install **babel-loaders**, to help transformations of `.jsx` files, and split `App.jsx` into many files, where each file is a React component placed in its own file.
+- All transforms and filetypes other than pure JavaScript require loaders in Webpack.
+- To make configuration and options easier for webpack, a configuration file can be used instead of performing configuration via command line. The default file in which configuration and options are placed are in a file named `webpack.config.js`.
+- Webpack has two modes, production and development, which change the kind of optimizations that are added during transformation.
+- Best practice is that each React component be placed its own file, especially if the component is a stateful one.
+- `App.jsx` imports `IssueList.jsx` which in turn imports the rest of the React components.
+#### Libraries Bundle:
+- In this section of the chapter, we take the previously fetched third-party libraries from a CDN, and instead load those dependencies using `npm`, bundle them using webpack, and optimize bundling so that two separate bundles are created, one for application `app.bundle.js` and one for all third-party libraries `vendor.bundle.js`.
+- We exclude libraries from the transformation process by changing the `webpack.config.js` file to exclude the `node_modules` directory.
+- We also utilize the `splitChunks` plugin to separate everything from `node_modules` into a separate bundle named `vendor.bundle.js`. Doing so, helps us remove unneeded transformation, and saves time and bandwidth.
+#### Hot Module Replacement:
+- In this section of the chapter, we install and utilize the Hot Module Replacement (HMR) feature from Webpack. The HMR feature changes modules in the browser while the application is running, removing the need to refresh the browser. It also saves time by updating only what is changed.
+- We configure the `ui/uiserver.js` file to utilize enable HMR only when we are in development mode.
+- The console will log `[HMR] connected` in the Developer Console to confirm HMR has been activated.
+- We accepted all changes unconditionally at the top of the hierarchy of modules in `App.jsx` by invoking the HMR plugin's `accept()` method in `App.jsx`.
+#### Debugging:
+- In this section of the chapter, we changed enabled `devtool` configuration parameter in `webpack.config.js` so we can utilize a `source-map` to debug our source code when comparing it to the compiled code.
+#### DefinePlugin: Build Configuration:
+- Instead of injecting environment variables into the front-end using a generated script of `eng.js`, Webpack's `DefinePlugin` can be used and configured in the `webpack.config.js` file instead to add and define a predetermined string. This approach works well, but has the downside of having to create different bundles or builds for different environments. As such, it is not a method utilized in the book.
+#### Production Optimization:
+- Two concerns that remain when the output is specified for production:
+- *bundle size*: For our Issue Tracking application, we make the assumption that it is a frequently used application, so the browser caches the bundle and the bundle size is not a concern. A strategy called *lazy-loading* can be utilized if bundle-size is a concern, which prioritizes splitting bundles into smaller sizes and loading bundles when required.
+- *browser caching*: Most modern browsers handle browser caching well and will check if there are changes within bundles. *content hashes* can be used as part of the bundle's name to force a bundle change.
+
+
+### Errors & Issues:
+- No issues.
+- Listing 8-29, is missing a comma after `devtool: 'source-map'`.
+
+
 
 ## Chapter 7
 ### Summary & Functionality Added:
@@ -373,5 +425,6 @@ Served as an introduction to how React applications can be built. Provides an in
  - Listing 2-1 should read  `ReactDOM.render(element, document.getElementByID('contents'));`. The listing has a typo and pass the argument `content` instead of `contents` inside the `getElementByID()` method. The typo causes the method to return `null` and not properly render *"Hello World"* because no element with that ID exists.
  - For build time JSX transformation, babel tools needed to be installed. I had an issue with installation. Resolved after realizing that `npm install --save-dev @babel/core@7 @babel/cli@7` needed to be executed within the `src` folder.
  - Listing 2-7 is missing an opening `<` and should read  `<script src="App.js></script>`.
+
 
 
