@@ -12,6 +12,8 @@ No additional functionality was added in this chapter. The priority was to furth
 
 ![ch08](/readme_images/ch8.png)
 
+**Image Note**: Warning is for a chrome-extention I use and does **not** have anything to do with being able to sucessfully apply `source-map` for compiled code.
+
 ### Chapter 8 Notes:
 
 #### Back-End Modules:
