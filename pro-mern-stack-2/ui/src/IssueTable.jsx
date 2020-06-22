@@ -1,4 +1,6 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+
 
 function IssueRow({ issue }) {
   return (
@@ -11,7 +13,7 @@ function IssueRow({ issue }) {
       <td>{issue.due ? issue.due.toDateString() : ''}</td>
       <td>{issue.title}</td>
       <td>
-        <a href={`/#/edit/${issue.id}`}>Edit</a>
+        <Link to={`/edit/${issue.id}`}>Edit</Link>
       </td>
     </tr>
   );
