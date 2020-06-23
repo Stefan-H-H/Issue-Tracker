@@ -6,13 +6,68 @@ Work through *Pro MERN Stack* (2nd Ed.)
 This is my repository for the project described in the book *Pro MERN Stack* (2nd Ed.) by Vasan Subramanian. Notes included are general notes that I thought would be beneficial for reference. Notes also include any errors or issues encountered while working throughout the book.
 
 ---
+## Chapter 9
+### Summary & Functionality Added:
+In this chapter we implemented client-side routing, with the ability to show different pages depending on links in a menu and navigation bar. These behaviors were implemented with the use of the React Router library. We also implemented a detailed description display whenever an issue is selected.
+
+
+![ch09](/readme_images/ch9.png)
+
+### Chapter 9 Notes:
+
+#### Simple Routing:
+- In this section of the chapter, we create two views, one for the existing issue list and another which serves as a placeholder for a report section.
+- We using routing to make sure that the home page `"/"` redirects to the issue list.
+- We split the application's main page into two sections: a header section containing a navigation bar with hyperlinks to different views, and a contents section, which will switch between the two views depending on the hyperlink selected. We utilize **React Router** package and its component `Route` to create the described behavior.
+- `Redirect` component is used to redirect from home page to `/issues`.
+- The `HashRouter` component is used to allow us to use in-page anchors to redirect URLs to the correct route.
+#### Route Parameters:
+- The URL's path and the route's path need not be a perfect match. Whatever follows the matched part in the URL is the *dynamic* part of the path, and it can be accessed as a variable in the routed component.
+- All routed components are provided an object called `match` that contains the result of the match operation. This contains a field called `params` that holds the router parameter variables. Thus, to access the trailing portion of the URL's path containing the `id`, `match.params.id` could be used.
+#### Query Parameters:
+- Here we implement a simple filter based the status field so that the user can list only issues that have a particular status.
+- The placeholder filter in `ui/src/IssueFilter.jsx` is replaced with three hyperlinks, one for All Issues, one for New Issues, and one for Assigned Issues.
+- The query string needs to be handled by `IssueList` component as part of the `loadData()` function. The React Router also supplies as part of props, an object called `location` that includes the path (in the field `pathname`) and the query string (in the field `search`).
+- `componentDidUpdate()` function is created in `ui/src/IssueList/jsx` to detect a change in the filter and reloading the data on a change.
+#### Links:
+- In this section of the chapter, we replace the previously used `href` links with `Link` components.
+- The `Link` component is similar to `href`, but it has the following differences:
+    - The paths in a `Link` are always absolute; it does not support relative paths.
+    - The query string and the pathname can be supplied as separate properties to the `Link`.
+    - A variation of `Link`, `NavLink` is capable of figuring out if the current `URL` matches the link and adds a class to the link to show it is active.
+    - A `Link` works the same between different kinds of routers, that is, the different ways of specifying the route (using the # character, or using the path as is) are hidden from the programmer.
+- `Link` takes one property `to`, which can be a string (for simple targets) or an object (for targets with query strings, etc.)
+- `NavLink` only adds a class called `active` when the link matches the URL.
+#### Programmatic Navigation:
+- In this section of the chapter, we add a dropdown menu for filtering purposes, and set the query string based on the value of the dropdown.
+- Query strings are typically used when the variables' values are dynamic and could have many combinations that cannot be predetermined.
+- The React Router adds properties to `IssueList` component, one of which is `history`. Using this, the location, query string, etc. of the browser's URL can be set.
+#### Nested Routes:
+- A common pattern for displaying details of one object while displaying a list of objects is using the header-detail UI pattern. We implement this behavior in this section, by creating a detailed description for a selected issue.
+- *Nested Routes* are where the beginning part of the path depicts one section of a page, and based on interaction within that page, the latter part of the path depicts variation, or further definition of what's shown additionally in the page. (e.g. `/issues` shows a list of issues and no detail, but `/issues/1` shows the detail section for issue 1 in addition of the list of issues.)
+- This behavior can be easily implemented due to Reacts *dynamic routing* philosophy.
+- `api/scripts/init.mongo.js` is modified to include descriptions for the existing issues so  we can use to verify appropriate behavior in the GraphQL playground and on the localhost.
+#### Browser History Router:
+- Up until this point, we used hash-based routing. But the downside of using has-based routing is when the server needs to respond to different URL paths.
+- The need to respond differently to different routes from the server itself arises when we need to support responses to search engine crawlers. That's because, for every link found by the crawler, a new request is made provided the *base* URL is different. If what follows the `#` is different, the crawler assumes that it's just an anchor within the page, and only a request to `/` is made regardless of the route's path.
+- To initialize changes, we change from `HashRouter` to `BrowserRouter` in the import statement of `ui/src/App.jsx`.
+- We also change `ui/uiserver.js` to return `index.html` *any* URL that is not handled, otherwise we receive a `Cannot GET /issues` message on attempt to refresh.
+- We also add a `publicPath` option to `ui/webpack.js` file to fetch update information for modules when they change and are recompiled by HMR.
+
+### Errors & Issues:
+- Had an issue when attempting to implement Nested Routes. I would consistently obtain the following error:
+
+![ch09](/readme_images/ch9-error.png)
+
+The error appears to be due to using an upgraded version of GraphQL, that does not match the author's repo. Author uses graphql `0.13.2` per the dependencies, as compared to the fact that I'm using `14.2.1`. Within `ui/src/IssueDetail.jsx`, I changed line 31 in `loadData()` from `const { match: { params: { id } } } = this.props;` to `const data = await graphQLFetch(query, { id: parseInt(id, 10) });` to address the issue.
+- I had an issue when implementing the Browser History Router. I was not getting the proper refresh behavior for `localhost:8000/edit/1` and was receiving a syntax error when Webpack recompiled to generate the `app.bundle.js`. The source of the issue was that I had a typo in my `index.html` file and had missed a leading slash (`/`) for a script at the bottom of the page which now correctly reads: `<script src="/app.bundle.js"></script>`.
+
+
 ## Chapter 8
 ### Summary & Functionality Added:
 No additional functionality was added in this chapter. The priority was to further modularize the existing code sourced from `App.jsx` into individual files for React components, and utilize Webpack to assist with bundling and compiling modules to assist with workflow for deployment.
 
 ![ch08](/readme_images/ch8.png)
-
-**Image Note**: Warning is for a chrome-extention I use and does **not** have anything to do with being able to sucessfully apply `source-map` for compiled code.
 
 ### Chapter 8 Notes:
 
@@ -427,6 +482,7 @@ Served as an introduction to how React applications can be built. Provides an in
  - Listing 2-1 should read  `ReactDOM.render(element, document.getElementByID('contents'));`. The listing has a typo and pass the argument `content` instead of `contents` inside the `getElementByID()` method. The typo causes the method to return `null` and not properly render *"Hello World"* because no element with that ID exists.
  - For build time JSX transformation, babel tools needed to be installed. I had an issue with installation. Resolved after realizing that `npm install --save-dev @babel/core@7 @babel/cli@7` needed to be executed within the `src` folder.
  - Listing 2-7 is missing an opening `<` and should read  `<script src="App.js></script>`.
+
 
 
 
