@@ -23,8 +23,16 @@ export default class IssueEdit extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { match: { params: { id: prevId } } } = prevProps;
-    const { match: { params: { id } } } = this.props;
+    const {
+      match: {
+        params: { id: prevId },
+      },
+    } = prevProps;
+    const {
+      match: {
+        params: { id },
+      },
+    } = this.props;
     if (id !== prevId) {
       this.loadData();
     }
@@ -33,7 +41,7 @@ export default class IssueEdit extends React.Component {
   onChange(event, naturalValue) {
     const { name, value: textValue } = event.target;
     const value = naturalValue === undefined ? textValue : naturalValue;
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       issue: { ...prevState.issue, [name]: value },
     }));
   }
@@ -47,10 +55,30 @@ export default class IssueEdit extends React.Component {
     });
   }
 
-  handleSubmit(e) {
+  async handleSubmit(e) {
     e.preventDefault();
-    const { issue } = this.state;
-    console.log(issue); // eslint-disable-line no-console
+    const { issue, invalidFields } = this.state;
+    if (Object.keys(invalidFields).length !== 0) return;
+
+    const query = `mutation issueUpdate(
+      $id: Int!
+      $changes: IssueUpdateInputs!
+    ) {
+      issueUpdate(
+        id: $id
+        changes: $changes
+      ) {
+        id title status owner
+        effort created due description
+      }
+    }`;
+
+    const { id, created, ...changes } = issue;
+    const data = await graphQLFetch(query, { changes, id });
+    if (data) {
+      this.setState({ issue: data.issueUpdate });
+      alert('Updated issue successfully'); // eslint-disable-line no-alert
+    }
   }
 
   async loadData() {
@@ -61,8 +89,12 @@ export default class IssueEdit extends React.Component {
       }
     }`;
 
-    const { match: { params: { id } } } = this.props;
-    const data = await graphQLFetch(query, { id: parseInt(id,10) });
+    const {
+      match: {
+        params: { id },
+      },
+    } = this.props;
+    const data = await graphQLFetch(query, { id: parseInt(id, 10) });
     // if (data) {
     //   const { issue } = data;
     //   issue.owner = issue.owner != null ? issue.owner : '';
@@ -75,8 +107,14 @@ export default class IssueEdit extends React.Component {
   }
 
   render() {
-    const { issue: { id } } = this.state;
-    const { match: { params: { id: propsId } } } = this.props;
+    const {
+      issue: { id },
+    } = this.state;
+    const {
+      match: {
+        params: { id: propsId },
+      },
+    } = this.props;
     if (id == null) {
       if (propsId != null) {
         return <h3>{`Issue with ID ${propsId} not found.`}</h3>;
@@ -94,9 +132,15 @@ export default class IssueEdit extends React.Component {
       );
     }
 
-    const { issue: { title, status } } = this.state;
-    const { issue: { owner, effort, description } } = this.state;
-    const { issue: { created, due } } = this.state;
+    const {
+      issue: { title, status },
+    } = this.state;
+    const {
+      issue: { owner, effort, description },
+    } = this.state;
+    const {
+      issue: { created, due },
+    } = this.state;
 
     return (
       <form onSubmit={this.handleSubmit}>
@@ -180,7 +224,9 @@ export default class IssueEdit extends React.Component {
             </tr>
             <tr>
               <td />
-              <td><button type="submit">Submit</button></td>
+              <td>
+                <button type="submit">Submit</button>
+              </td>
             </tr>
           </tbody>
         </table>
