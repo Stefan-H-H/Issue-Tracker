@@ -23,16 +23,8 @@ export default class IssueEdit extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const {
-      match: {
-        params: { id: prevId },
-      },
-    } = prevProps;
-    const {
-      match: {
-        params: { id },
-      },
-    } = this.props;
+    const { match: { params: { id: prevId } } } = prevProps;
+    const { match: { params: { id } } } = this.props;
     if (id !== prevId) {
       this.loadData();
     }
@@ -89,32 +81,14 @@ export default class IssueEdit extends React.Component {
       }
     }`;
 
-    const {
-      match: {
-        params: { id },
-      },
-    } = this.props;
+    const { match: { params: { id } } } = this.props;
     const data = await graphQLFetch(query, { id: parseInt(id, 10) });
-    // if (data) {
-    //   const { issue } = data;
-    //   issue.owner = issue.owner != null ? issue.owner : '';
-    //   issue.description = issue.description != null ? issue.description : '';
-    //   this.setState({ issue, invalidFields: {} });
-    // } else {
-    //   this.setState({ issue: {}, invalidFields: {} });
-    // }
     this.setState({ issue: data ? data.issue : {}, invalidFields: {} });
   }
 
   render() {
-    const {
-      issue: { id },
-    } = this.state;
-    const {
-      match: {
-        params: { id: propsId },
-      },
-    } = this.props;
+    const { issue: { id } } = this.state;
+    const { match: { params: { id: propsId } } } = this.props;
     if (id == null) {
       if (propsId != null) {
         return <h3>{`Issue with ID ${propsId} not found.`}</h3>;
@@ -132,15 +106,9 @@ export default class IssueEdit extends React.Component {
       );
     }
 
-    const {
-      issue: { title, status },
-    } = this.state;
-    const {
-      issue: { owner, effort, description },
-    } = this.state;
-    const {
-      issue: { created, due },
-    } = this.state;
+    const { issue: { title, status }, } = this.state;
+    const { issue: { owner, effort, description } } = this.state;
+    const { issue: { created, due } } = this.state;
 
     return (
       <form onSubmit={this.handleSubmit}>
