@@ -52,8 +52,7 @@ export default class DateInput extends React.Component {
     const { valid, focused, value } = this.state;
     const { value: origValue, name } = this.props;
     const className = (!valid && !focused) ? 'invalid' : null;
-    const displayValue = (focused || !valid) ? value
-      : displayFormat(origValue);
+    const displayValue = (focused || !valid) ? value : displayFormat(origValue);
     return (
       <input
         type="text"

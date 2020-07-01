@@ -9,6 +9,13 @@ This is my repository for the project described in the book *Pro MERN Stack* (2n
 
 ## Chapter 10
 ### Summary & Functionality Added:
+This chapter focused on further UI development for both the main `IssueList` page and the `IssueEdit` page. We implemented the following:
+- A two field (min, max) number input filter for effort on the `IssueList` page.
+- Created an `Apply` and `Reset` button that allows the user to apply a filter only on click, and will reset the filter to the previously chosen one prior to application, respectively.
+- A close button that allows the user to directly close an issue from a row in the table.
+- A delete button that allows the user to directly delete an issue form a row in the table and retains it temporarily in a `deleted_issues` database collection, for later possible retrieval.
+- Created an Edit form  for the `IssueEdit` page.
+- Created specialized components for `TextInput`, `DateInput`, and `NumInput`. `TextInput` to help handle `null` cases, `DateInput` to handle dates, and `NumInput` to handle numbers, all while allowing for validation status awareness to the user in real time.
 
 ![ch10](/readme_images/ch10-1.png)
 
@@ -19,33 +26,33 @@ This is my repository for the project described in the book *Pro MERN Stack* (2n
 
 #### Controlled Components:
 -  Here we make the `IssueFilter` component a controlled component.
--  To be able to show a value in the input, it hase to be controlled by the parent via a state variable or props variable. This can be done by setting the value of the input to the state or props variable. Thus, the input will directly reflect that value, and the React Component that renderes the form will also control what happens in that form on subsequent user input. This is called a *controlled component*.
+-  To be able to show a value in the input, it has to be controlled by the parent via a state variable or props variable. This can be done by setting the value of the input to the state or props variable. Thus, the input will directly reflect that value, and the React Component that renders the form will also control what happens in that form on subsequent user input. This is called a *controlled component*.
 #### Controlled Components in Forms:
 - Here we Add an apply button with an apply handler.
 - React does not perform support two-way binding as part of its library.
-- We also add a Reset button which will show the orginal filter of the dropdown onClick.
-- After implmentation, the chosen fileter from the dropdown is only applied when clicking on the Apply button.
+- We also add a Reset button which will show the original filter of the dropdown on Click.
+- After implementation, the chosen filter from the dropdown is only applied when clicking on the Apply button.
 #### More Filters:
-- Here we add a filter on the Effort field. We adda a minimum and maximum, both of which are optional and allow us to filter.
+- Here we add a filter on the Effort field. We add a minimum and maximum, both of which are optional and allow us to filter.
 - The `effort` filter of the MongoDB filter has to be created only if either of the effort options are present and then the `$gte` and `$lte` options have to be set.
  #### Typed Input:
- - Here we change the UI to allow two inputs for the effort fiter that will coincide with  `effortMax` and `effortMin`. We also add a filter that screens the user's keystrokes so that only numbers are accepted in these input fields.
+ - Here we change the UI to allow two inputs for the effort filter that will coincide with  `effortMax` and `effortMin`. We also add a filter that screens the user's keystrokes so that only numbers are accepted in these input fields.
  - Filters responsiveness by URL changes can be tested by typing e.g. `localhost:8000/issues?effortMax=6`.
  - We utilize regex to limit user input to only digits.
- - After sucessful implemntation of the Typed filters for `effort`, the URL should reflect the application of the effort filter when applied, e.g. `http://localhost:8000/issues?status=New&effortMin=5&effortMax=10`.
+ - After successful implementation of the Typed filters for `effort`, the URL should reflect the application of the effort filter when applied, e.g. `http://localhost:8000/issues?status=New&effortMin=5&effortMax=10`.
  #### Edit Form:
  - Here we remove the previous placeholder for the Edit Form page, and create a complete form for the Edit page in `IssueEdit.jsx`.
- - `...` is a spread operator which is used to spread the values of the issue object as if they were all mentioned individually, like `{ id: prevState.issue.id, title: prevState.issue.title }` etc. This is a simpler way of copying a n object compared to `Object.assign()`. Then with the property `name` as the *value* of the variable name is used to overrride the properties that were expanded.
+ - `...` is a spread operator which is used to spread the values of the issue object as if they were all mentioned individually, like `{ id: prevState.issue.id, title: prevState.issue.title }` etc. This is a simpler way of copying a n object compared to `Object.assign()`. Then with the property `name` as the *value* of the variable name is used to override the properties that were expanded.
  #### Specialized Input Components:
- - Ideally, we want the form's state to store the fields in their natrual data types.
+ - Ideally, we want the form's state to store the fields in their natural data types.
  - We also want all of the data type conversions routines to be shared. 
- - Specialized Input components should take the approach of a dispoint state - where the component is a controlled one as long as the user is not editing the component and its only function is to display hte current value. When the user starts editing, we make it an uncontrollable component.
+ - Specialized Input components should take the approach of a disjoint state - where the component is a controlled one as long as the user is not editing the component and its only function is to display the current value. When the user starts editing, we make it an uncontrollable component.
  #### Number Input:
  - Here we create a specialized input component for number inputs to be used for the `effort` filed in the Edit page in place of a plain `<input>` element.
  #### Date Input:
- - Here we create a specialized input component for dates in which we have to wait until the user is done typing to evalute the validity of the input.
+ - Here we create a specialized input component for dates in which we have to wait until the user is done typing to evaluate the validity of the input.
  #### Text Input:
- - Here we create a specialized input component for text input. While seemingly unecesssary, it allows us to handle null checks.
+ - Here we create a specialized input component for text input. While seemingly unnecessary, it allows us to handle null checks.
  #### Update API:
  - Here we implement the API that allows us to save the edited issue to the database.
  - We have two options for implementing the Update API:
@@ -53,18 +60,19 @@ This is my repository for the project described in the book *Pro MERN Stack* (2n
     - We can replace the entire document with new values, correlating to the MongoDB `replace` command.
 - Here it is best we use the `update` operation because the `created` field.
 #### Updating an Issue:
-- Here we implemen tthe `HandleSubmit()` method to make the call to the API to save the change made by the user.
+- Here we implement the `HandleSubmit()` method to make the call to the API to save the change made by the user.
 #### Updating a Field:
-- Here we use teh same API to update a single field rather than the entire issue object all at once. Here we specifically implement a `close` button in the `IssueList` table allows the user to directly mark any issue closed onClick of the button.
+- Here we use the same API to update a single field rather than the entire issue object all at once. Here we specifically implement a `close` button in the `IssueList` table allows the user to directly mark any issue closed on Click of the button.
 #### Delete API:
 - Here we implement a Delete API for disposal of an issue.
 - It is important to note that we cannot name a function `delete` because it is a reserved keyword in JavaScript. We can, however, name it as `remove()` and export the function with a name `delete`.
-- We mimick computer file system behavior when a user deletes a file by creating a separate database collection called `deleted_issues` in which we can temporarily store deleted issues for later potential retrieval.
+- We mimic computer file system behavior when a user deletes a file by creating a separate database collection called `deleted_issues` in which we can temporarily store deleted issues for later potential retrieval.
 #### Deleting an Issue:
-- Here we integrate the Delete API into the UI and add a button for deletion that can allows the user to delete an issue onClick.
+- Here we integrate the Delete API into the UI and add a button for deletion that can allows the user to delete an issue on Click.
  
 ### Errors & Issues:
 - Within `ui/src/IssueEdit.jsx`,  from pg. 285 of the textbook I changed line 91 in `loadData()` from to state: `const data = await graphQLFetch(query, { id: parseInt(id, 10) });`, otherwise there is a parsing error. Reference Chapter 9 error for further commentary.
+- The specialized component `DateInput.jsx` causes the correct validation behavior in Firefox, but not in Chrome.
 
 ## Chapter 9
 ### Summary & Functionality Added:
@@ -542,6 +550,7 @@ Served as an introduction to how React applications can be built. Provides an in
  - Listing 2-1 should read  `ReactDOM.render(element, document.getElementByID('contents'));`. The listing has a typo and pass the argument `content` instead of `contents` inside the `getElementByID()` method. The typo causes the method to return `null` and not properly render *"Hello World"* because no element with that ID exists.
  - For build time JSX transformation, babel tools needed to be installed. I had an issue with installation. Resolved after realizing that `npm install --save-dev @babel/core@7 @babel/cli@7` needed to be executed within the `src` folder.
  - Listing 2-7 is missing an opening `<` and should read  `<script src="App.js></script>`.
+
 
 
 
