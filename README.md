@@ -7,6 +7,78 @@ This is my repository for the project described in the book *Pro MERN Stack* (2n
 
 ---
 
+## Chapter 11
+### Summary & Functionality Added:
+In this chapter we reconfigured the UI style by using React-Bootstrap to make the web application look more professional and polished. Some of the additions included:
+- Using `Glyphicons` for closing, editing, deleting an issue.
+- A removal of the select link, and allowing the entire row to be selected to show the corresponding description.
+- Implemented a more polished Navigation Bar in the Header and a reference to the author's GitHub repo in the Footer.
+- Implemented a collapsible `Panel` for the IssueFilter at the top of the IssueList page.
+- Toast messages were implemented to notify the user of informational messages, such as success or failure of attempted operations.
+- Implemented the use of modal component to allow the user to add an Issue from any page.
+
+
+![ch11](/readme_images/ch11.png)
+
+### Chapter 11 Notes:
+
+#### Bootstrap Installation:
+- Here we install React-Bootstrap and Bootstrap to begin making our web application look better. React-Bootstrap contains  library of React components and has no CSS styles or themes itself. It requires Bootstrap stylesheet to be included in the application to use these components.
+- Google Chrome allows us to emulate a real mobile device. the `Show Device Frame` option can be selected to show an emulation of the device with its corresponding screen size. `Shift key + click-drag` allows us to emulate pinch zoom on the mobile device.
+- We create a symbolic link to the Bootstrap distribution under the `public` directory so we can use bootstrap directly instead of through a CDN.
+#### Buttons:
+- Here we replace the Apply and Reset buttons in the Issue Filter with Bootstrap buttons.
+- `<Button>` components uses `bsStyle` property to make buttons look distinct.
+- The `Glyphicon` component of React-Bootstrap allows us to use icons for buttons. We implement the use of these components for the edit, close, and delete actions.
+- The `Tooltip` component is used to provide a useful description of the button on mouse hover.
+#### Navigation Bar:
+- Here we style the navigation links into a formal header navigation bar, and add a footer, both of which are visible on all pages.
+- We use a `Navbar` component to wrap the entire navigation bar which consists of a `Nav` component that wraps individual `NavItems`.
+- `NavDropdown` is a component that provides functionality for a dropdown menu, where each option is wrapped by  a `MenuItem` component.
+- The `react-router-bootstrap` package provides a wrapper called `LinkContainer` which acts as the React Router's `NavLink`, and at the same time lets its children have their own rendering.
+#### Panels:
+- Here we implement the use of Bootstrap's `Panel` component to decorate the Filter section in the Issue List page. The `Panel` component is a way that allows us to show section separately using a border and an optional heading.
+- We can make the `Panel.Body` collapsible by using the `collapsible` property.
+- We wrap the page contents with a `Grid` component to add margins to the body of the page within `Page.jsx`.
+#### Tables:
+- Here we implement the use of a bootstrap table to make it look better, highlight a row on mouse hover, and have the table expand to the fit the screen.
+- We also remove the select link, and make the entire row clickable so that the description is displayed. We do this by using a `LinkContainer` to wrap the entire row and let it navigate to the same location as in the `Select` link.
+- To avoid selection behavior on the buttons within the row, we use `e.preventDefault()` for the buttons.
+#### Forms:
+- We are introduced to the basic components of the Bootstrap library to replace simple `<input>` and `<select>` options with the React-Bootstrap equivalents and labels for them.
+- Using React-Bootstrap, the common input types are instantiated using a `FormControl`.
+- The `componentClass` property can be used to change the default (`<input>`) to any other element type, e.g. `select`.
+- A label can be associated with the form control using `ControlLabel` component. The only child of this component is the label text. To keep the label and control together, they need to be put together under a `FormGroup`.
+- `InputGroup.Addon` component can be used to display inputs next to each other.
+- We previously used a space character between two buttons. A better way is to do this and keep the buttons together is by using the `ButtonToolBar` component.
+#### The Grid System:
+- The gird system words this way: the horizontal space is divided into a maximum of 12 columns. A cell (using the component `Col`) can occupy one or more columns and a different number of columns at different screen widths. The cells wrap if there are more than 12 column-space cells in a row (`Row` component). A new row is required if there's a need to force a break in the flow of cells. 
+- When it comes to forms, the best way to use the grid system is to have a single row and specify how many columns each form control (one cell) occupies at different screen widths.
+- The fluid grid system is best compared to paragraphs and lines. Rows = paragraphs. A paragraph can contain multiple lines. As the paragraph width (screen width) reduces, it will need more lines. It's only when you want to break two sets of sentences (sets of cells) that you really need another paragraph (row).
+#### Inline Forms:
+- Sometimes we want the form controls next to each other, including labels. This is ideal for small forms with two or three inputs that can all fit on one line. and are closely related. 
+- For inline forms, we need a `<Form>` with the `inline` property to wrap the form controls.
+#### Horizontal Forms:
+- Here we change the Issue Edit page to use a horizontal form. In a horizontal form the label appears to the left of the input, but each field appears one below the other.
+-  For horizontal forms, we need a `<Form>` with the `horizontal` property.
+#### Validation Alerts:
+- Here we replace validation errors within the `IssueEdit` page to use the bootstrap `Alert` component. We also implement the ability to have the user dismiss, or exit out of the alert.
+- The `Alert` component has different styles, e.g. `danger`, `warning`, etc.
+#### Toasts:
+- We replace all other result messages and informational alerts related to report successes and failures of operations with a `Toast` component modeled after functionality that exists in Android OS. Changes are made to `IssueDetail`, `IssueEdit`, and `IssueList`.
+- We additionally implement a timer that can call the  `onDismiss()` callback when time expires. Our message with thus fade out after 5 seconds.
+- Because the timer may fire event if the user has navigated away from the page, we implement a `componentWillUnmount()` method to dismiss the timer when the component is unmounted.
+#### Modals:
+- Here we replace the in-page `IssueAdd` component with a modal dialog that is launched by clicking the Create Issue navigation item in the header. This way a user can create an issue from anywhere in the application.
+- We create a self-contained component that displays the navigation item, launches the dialog and controls its visibility , creates the issue, and routes to the IssueEdit page on successful creation. The new component is called `IssueAddNavItem`.
+- The `Modal` component requires two important properties: `showing` which controls visibility of the modal dialog, and `onHide()` handler, which will be called when the user clicks on the cross icons to dismiss the dialog.
+-`graphQLFetch` call errors handled and shown via a Toast message. 
+
+### Errors & Issues:
+- On page 333, in Listing 11-10, the author shows removal of `withRouter` import. It in fact needs to be retained. (Confirmed with author's repo).
+- On page 354, the author states to define two methods to toggle the state of the validation message's visibility and bind them to `this` in the constructor, and to refer to Listing 11-19. Binding of these methods is not shown in Listing 11-19. (I referred to the author's repo).
+
+
 ## Chapter 10
 ### Summary & Functionality Added:
 This chapter focused on further UI development for both the main `IssueList` page and the `IssueEdit` page. We implemented the following:
@@ -550,6 +622,7 @@ Served as an introduction to how React applications can be built. Provides an in
  - Listing 2-1 should read  `ReactDOM.render(element, document.getElementByID('contents'));`. The listing has a typo and pass the argument `content` instead of `contents` inside the `getElementByID()` method. The typo causes the method to return `null` and not properly render *"Hello World"* because no element with that ID exists.
  - For build time JSX transformation, babel tools needed to be installed. I had an issue with installation. Resolved after realizing that `npm install --save-dev @babel/core@7 @babel/cli@7` needed to be executed within the `src` folder.
  - Listing 2-7 is missing an opening `<` and should read  `<script src="App.js></script>`.
+
 
 
 
