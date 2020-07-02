@@ -1,6 +1,9 @@
 import React from 'react';
-import { Link, NavLink, withRouter } from 'react-router-dom';
-import { Button, Glyphicon, Tooltip, OverlayTrigger } from 'react-bootstrap'
+// import { Link, NavLink, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom'
+import { Button, Glyphicon, Tooltip, OverlayTrigger, Table,
+} from 'react-bootstrap'
+import { LinkContainer } from 'react-router-bootstrap';
 
 
 const IssueRow = withRouter(({ 
@@ -11,13 +14,27 @@ const IssueRow = withRouter(({
   index,
 }) => {
   const selectLocation = { pathname: `/issues/${issue.id}`, search };
+  const editTooltip = (
+    <Tooltip id="close-tooltip" placement="top">Edit Issue</Tooltip>
+  );
   const closeTooltip = (
     <Tooltip id="close-tooltip" placement="top">Close Issue</Tooltip>
   );
   const deleteTooltip = (
     <Tooltip id="delete-tooltip" placement="top">Delete Issue</Tooltip>
   );
-  return (
+
+  function onClose(e) {
+    e.preventDefault();
+    closeIssue(index);
+  }
+
+  function onDelete(e) {
+    e.preventDefault();
+    deleteIssue(index);
+  }
+
+  const tableRow = (
     <tr>
       <td>{issue.id}</td>
       <td>{issue.status}</td>
@@ -27,25 +44,36 @@ const IssueRow = withRouter(({
       <td>{issue.due ? issue.due.toDateString() : ''}</td>
       <td>{issue.title}</td>
       <td>
-        <Link to={`/edit/${issue.id}`}>Edit</Link>
-        {' | '}
-        <NavLink to={selectLocation}>Select</NavLink>
-        {' | '}
+        <LinkContainer to={`/edit/${issue.id}`}>
+          <OverlayTrigger delayShow={1000} overlay={editTooltip}>
+            <Button bsSize="xsmall">
+              <Glyphicon glyph="edit" />
+            </Button>
+          </OverlayTrigger>
+        </LinkContainer>
+        {' '}
         <OverlayTrigger delayShow={1000} overlay={closeTooltip}>
-          <Button bsSize="xsmall" onClick={() => { closeIssue(index); }}>
+          <Button bsSize="xsmall" onClick={onClose}>
             <Glyphicon glyph="remove" />
           </Button>
         </OverlayTrigger>
-        {' | '}
+        {' '}
         <OverlayTrigger delayShow={1000} overlay={deleteTooltip}>
-          <Button bsSize="xsmall" onClick={() => { deleteIssue(index); }}>
+          <Button bsSize="xsmall" onClick={onDelete}>
             <Glyphicon glyph="trash" />
           </Button>
         </OverlayTrigger>
       </td>
     </tr>
   );
+
+  return (
+    <LinkContainer to={selectLocation}>
+      {tableRow}
+    </LinkContainer>
+  );
 });
+
 
 export default function IssueTable({ issues, closeIssue, deleteIssue }) {
   const issueRows = issues.map((issue, index) => (
@@ -58,7 +86,7 @@ export default function IssueTable({ issues, closeIssue, deleteIssue }) {
     />
   ));
   return (
-    <table className="bordered-table">
+    <Table bordered condensed hover responsive>
       <thead>
         <tr>
           <th>ID</th>
@@ -72,6 +100,6 @@ export default function IssueTable({ issues, closeIssue, deleteIssue }) {
         </tr>
       </thead>
       <tbody>{issueRows}</tbody>
-    </table>
+    </Table>
   );
 }
