@@ -1,10 +1,4 @@
 {
-  "extends": ["airbnb-base", "prettier"],
+  "extends": ["airbnb", "prettier"],
   "plugins": ["prettier"],
-  "env": {
-    "node": true
-  },
-  "rules": {
-    "no-console": "off"
-  }
 }
