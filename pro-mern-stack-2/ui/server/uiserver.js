@@ -3,6 +3,8 @@ const path = require('path');
 const express = require('express');
 const proxy = require('http-proxy-middleware');
 
+const render = require('./render.js');
+
 const app = express();
 
 const enableHMR = (process.env.ENABLE_HRM || 'true') === 'true';
@@ -35,6 +37,8 @@ if (apiProxyTarget) {
 const UI_API_ENDPOINT =
   process.env.UI_API_ENDPOINT || 'http://localhost:3000/graphql';
 const env = { UI_API_ENDPOINT };
+
+app.get('/about', render);
 
 app.get('/env.js', (req, res) => {
   res.send(`window.ENV = ${JSON.stringify(env)}`);
