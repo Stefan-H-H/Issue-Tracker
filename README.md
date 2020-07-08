@@ -6,6 +6,62 @@ Work through *Pro MERN Stack* (2nd Ed.)
 This is my repository for the project described in the book *Pro MERN Stack* (2nd Ed.) by Vasan Subramanian. Notes included are general notes that I thought would be beneficial for reference. Notes also include any errors or issues encountered while working throughout the book.
 
 ---
+## Chapter 12
+### Summary & Functionality Added:
+This chapter explores server-side rendering. Server-side rendering generates the HTML on the server side and sends it to the browser to be rendered on the DOM. With server-side rendering the entire HTML is constructed on the server and sent to the browser. Th need for server-rendering arises for an application to be effectively indexed by search engines. In this chapter we create an additional *About* Page to explore server rendering and later extrapolate and make our entire web application have server-rending by the end of the chapter.
+
+![ch12](/readme_images/ch12.png)
+
+### Chapter 12 Notes:
+
+- Server Rendering - The first time any page is opened in the application (typing URL or refreshing the browser), the entire page will be constructed and returned from the server.
+- Browser Rendering - Once any page is loaded and the user navigates to another page, we'll make it work like a SPA. That is, only the API will be made and the DOM will be modified directly on the browser.
+### New Directory Structure:
+- Here we create a new directory structure for the `UI`. All code under the `src` directory is meant to be compiled into a bundle and served to the browser. We create three sets of files:
+    - All the shared files (all the React Components).
+    - A set of files used to run the UI server using Express. This will import the shared React components for server rendering.
+    - A starting point for the browser bundle, one that includes all the shared React components and can be sent to the browser to execute.
+#### Basic Server Rendering:
+- Previously, we used `ReactDOM.render()` method to render a React element into the DOM. The counterpart method that is to be used to create an HTML on the server side is `ReactDOMServer.renderToString()`.
+- We create `template.js` to accept the contents of `<div>` and return the complete HTML.
+#### Webpack for the Server:
+- Webpack can be used for the server as well, and it can compile JSX on the fly. This also lets us consistently use the import/export paradigm in the UI server codebase.
+- Many server-side Node packages such as Express are not compatible with Webpack. They import other packages dynamically, making it hard for Webpack to follow the dependency chain. As a result, we'll have to exclude the third-party libraries form the bundle and rely on `node_modules` t be present in the UI server's file system.
+#### HMR for the Server:
+- Webpack  for the server does simplify the compilation process, but in development mode we'd have to restart the server on every change. Instead, we'll only reload changes to modules on the shared folder. As for changes to `uiserver.js` itself, we expect these to be very few and far between, so we'll restart the server manually when this file is changed and use HMR for the rest of the code that it includes.
+#### Server Router:
+- On the server, React Router recommends that we use `StaticRouter` in place of  a `BrowserRouter`. Whereas the `BrowserRouter` looks at the browser's URL, the `StaticRouter` has to be supplied the URL. Based on this, the router will choose an appropriate component to render. `StaticRouter` takes a property called `location`, which is a *static* URL that the rest of the rendering will need. It also needs a property called `context`, whose purpose is not obvious right now, so let's just supply an empty object for it.
+#### Hydrate:
+- In order to attach even handlers, we have to include the source code and let React take control of the rendered page. the way to do this is by loading React and letting it render the page as it would have done during rendering using the `ReactDOM.render()`.
+- React makes a distinction between rendering the DOM to replace a DOM element and attaching event handler to the server-rendered DOM. Changing `render()` to `hydrate()` causes event handler to be attached to all components and make the page viewable *and* interactive.
+#### Data from API:
+- The message in the About component should come directly from the API server. We need the API's return value to be available when the component is being rendered on the server. This means that we'll need to be able to make requests to the API server via graphQLFetch() from the server as well.
+- We replace the `whatwg-fetch` module with `isomorphic-fetch` which can be used both on the browser as well as Node.js.
+- We create a global store for all data that is needed for the hierarchy of components that need to be rendered. (`store.js`). With data available in the global store, we can now change the `About` component to read it off the global store to display the *real* API version.
+#### Syncing Initial Data:
+- There should not be a mismatch between what the browser renders and what the server renders. As such, we need to make the browser render identical to the server render. We need the data when the component is being rendered for the first time. The recommended way to do that is to pass the same initial data resulting from the API call to the browser in the form of a script and use that to initialize the global store. This way, when the component is being rendered, it will have the same data as the component that was rendered at the server.
+#### Common Data Fetcher:
+- Here we add a data fetcher in the `About` component that could be used to populate its message to take care of the case where it is mounted only on the browser. We add a `componentDidMount()` method in the `About` component.
+#### Generated Routes:
+- Here we fix mismatched errors that React is showing for the rest of the pages, and lay down the framework that deals with fetching data in a generic manner, and make it fetch data that is appropriate for the component that will actually be rendered within the page.
+- The data required via API calls needs to be available before rendering is initiated on the server.
+- We create a list of routable pages in a JavaScript array that we store in a file called `routes.js`.
+#### Data Fetcher with Parameters:
+- Here we make `IssueEdit` component render from the server with the data it requires prepopulated.
+#### Data Fetcher with Search:
+- Here we implement the data fetcher in the `IssueLIst` component. We pass the query string (React router calls this `search`) in addition to the `match` object to `fetchData()`.
+#### Nested Components:
+- React Router’s dynamic routing works great when navigating via links in the UI, it is inconvenient when it comes to server rendering, but it does not  easily deal with nested routes. As such, we can use the route specification for `IssueList` which includes an optional issue ID, and this component deals with the loading of the detail part too. This method has the following advantages:
+        - The route specification remains simple and has only the top-level pages in a flat structure, without any hierarchy.
+        - It gives us an opportunity to combine two API calls into one in the case where the Issue List is loaded with a selected issue.
+#### Redirects
+- A request to the home page `/`, returns a HTML from the server that contains an empty page. We need the server  to respond with a 301 Redirect so that the browser fetches `/issues` instead from the server. Ind doing so, we allow search engine bots also will get the same contents for a request to `/` as they get for `/issues`.
+
+
+### Errors & Issues:
+- In the changes between listing 12-33 and listing 12-39 the name of the variable `initialData` appears to have changed to `resultData`.  It should be `initialData`.
+- In listing 12-31, the line import fetch from 'isomorphic-fetch' is not in boldface, but should be. This code must be added to your script.
+- In listing 12- 45, I changed  `const result = await graphQLFetch(query, { id }, showError)` to `const result = await graphQLFetch(query, { id: parseInt(id, 10) , showError)`.
 
 ## Chapter 11
 ### Summary & Functionality Added:
@@ -622,6 +678,7 @@ Served as an introduction to how React applications can be built. Provides an in
  - Listing 2-1 should read  `ReactDOM.render(element, document.getElementByID('contents'));`. The listing has a typo and pass the argument `content` instead of `contents` inside the `getElementByID()` method. The typo causes the method to return `null` and not properly render *"Hello World"* because no element with that ID exists.
  - For build time JSX transformation, babel tools needed to be installed. I had an issue with installation. Resolved after realizing that `npm install --save-dev @babel/core@7 @babel/cli@7` needed to be executed within the `src` folder.
  - Listing 2-7 is missing an opening `<` and should read  `<script src="App.js></script>`.
+
 
 
 
