@@ -1,5 +1,4 @@
 import dotenv from 'dotenv';
-import path from 'path';
 import express from 'express';
 import proxy from 'http-proxy-middleware';
 import SourceMapSupport from 'source-map-support';
@@ -10,10 +9,9 @@ const app = express();
 
 SourceMapSupport.install();
 dotenv.config();
+const enableHMR = (process.env.ENABLE_HMR || 'true') === 'true';
 
-const enableHMR = (process.env.ENABLE_HRM || 'true') === 'true';
-
-if (enableHMR && process.env.NODE_ENV !== 'production') {
+if (enableHMR && (process.env.NODE_ENV !== 'production')) {
   console.log('Adding dev middleware, enabling HMR');
   /* eslint "global-require": off */
   /* eslint "import/no-extraneous-dependencies": "off" */
@@ -21,8 +19,7 @@ if (enableHMR && process.env.NODE_ENV !== 'production') {
   const devMiddleware = require('webpack-dev-middleware');
   const hotMiddleware = require('webpack-hot-middleware');
 
-  // Uses 'browserConfig' from webpack.config.js
-  const config = require('../webpack.config.js')[0];  
+  const config = require('../webpack.config.js')[0];
   config.entry.app.push('webpack-hot-middleware/client');
   config.plugins = config.plugins || [];
   config.plugins.push(new webpack.HotModuleReplacementPlugin());
@@ -47,18 +44,13 @@ if (!process.env.UI_SERVER_API_ENDPOINT) {
   process.env.UI_SERVER_API_ENDPOINT = process.env.UI_API_ENDPOINT;
 }
 
-app.get('/about', (req, res, next) => {
-  render(req, res, next);
-});
-
-
 app.get('/env.js', (req, res) => {
   const env = { UI_API_ENDPOINT: process.env.UI_API_ENDPOINT };
   res.send(`window.ENV = ${JSON.stringify(env)}`);
 });
 
-app.get('*', (req, res) => {
-  res.sendFile(path.resolve('public/index.html'));
+app.get('*', (req, res, next) => {
+  render(req, res, next);
 });
 
 const port = process.env.UI_SERVER_PORT || 8000;
