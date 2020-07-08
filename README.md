@@ -16,7 +16,7 @@ This chapter explores server-side rendering. Server-side rendering generates the
 
 - Server Rendering - The first time any page is opened in the application (typing URL or refreshing the browser), the entire page will be constructed and returned from the server.
 - Browser Rendering - Once any page is loaded and the user navigates to another page, we'll make it work like a SPA. That is, only the API will be made and the DOM will be modified directly on the browser.
-### New Directory Structure:
+#### New Directory Structure:
 - Here we create a new directory structure for the `UI`. All code under the `src` directory is meant to be compiled into a bundle and served to the browser. We create three sets of files:
     - All the shared files (all the React Components).
     - A set of files used to run the UI server using Express. This will import the shared React components for server rendering.
