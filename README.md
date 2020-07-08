@@ -52,8 +52,8 @@ This chapter explores server-side rendering. Server-side rendering generates the
 - Here we implement the data fetcher in the `IssueLIst` component. We pass the query string (React router calls this `search`) in addition to the `match` object to `fetchData()`.
 #### Nested Components:
 - React Router’s dynamic routing works great when navigating via links in the UI, it is inconvenient when it comes to server rendering, but it does not  easily deal with nested routes. As such, we can use the route specification for `IssueList` which includes an optional issue ID, and this component deals with the loading of the detail part too. This method has the following advantages:
-        - The route specification remains simple and has only the top-level pages in a flat structure, without any hierarchy.
-        - It gives us an opportunity to combine two API calls into one in the case where the Issue List is loaded with a selected issue.
+    - The route specification remains simple and has only the top-level pages in a flat structure, without any hierarchy.
+    - It gives us an opportunity to combine two API calls into one in the case where the Issue List is loaded with a selected issue.
 #### Redirects
 - A request to the home page `/`, returns a HTML from the server that contains an empty page. We need the server  to respond with a 301 Redirect so that the browser fetches `/issues` instead from the server. Ind doing so, we allow search engine bots also will get the same contents for a request to `/` as they get for `/issues`.
 
