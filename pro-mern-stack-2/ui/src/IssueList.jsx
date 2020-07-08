@@ -8,17 +8,48 @@ import IssueTable from './IssueTable.jsx';
 import IssueDetail from './IssueDetail.jsx';
 import graphQLFetch from './graphQLFetch.js';
 import Toast from './Toast.jsx';
+import store from './store.js';
 
 export default class IssueList extends React.Component {
+  static async fetchData(match, search, showError) {
+    const params = new URLSearchParams(search);
+    const vars = {};
+    if (params.get('status')) vars.status = params.get('status');
+
+    const effortMin = parseInt(params.get('effortMin'), 10);
+    if (!Number.isNaN(effortMin)) vars.effortMin = effortMin;
+    const effortMax = parseInt(params.get('effortMax'), 10);
+    if (!Number.isNaN(effortMax)) vars.effortMax = effortMax;
+
+    const query = `query issueList(
+      $status: StatusType
+      $effortMin: Int
+      $effortMax: Int
+    ) {
+      issueList(
+        status: $status
+        effortMin: $effortMin
+        effortMax: $effortMax
+      ) {
+        id title status owner
+        created effort due
+      }
+    }`;
+
+    const data = await graphQLFetch(query, vars, showError);
+    return data;
+  }
+
   constructor() {
     super();
+    const issues = store.initialData ? store.initialData.issueList : null;
+    delete store.initialData;
     this.state = {
-      issues: [],
+      issues,
       toastVisible: false,
       toastMessage: '',
       toastType: 'info',
     };
-
     this.closeIssue = this.closeIssue.bind(this);
     this.deleteIssue = this.deleteIssue.bind(this);
     this.showSuccess = this.showSuccess.bind(this);
@@ -27,7 +58,8 @@ export default class IssueList extends React.Component {
   }
 
   componentDidMount() {
-    this.loadData();
+    const { issues } = this.state;
+    if (issues == null) this.loadData();
   }
 
   componentDidUpdate(prevProps) {
@@ -40,31 +72,7 @@ export default class IssueList extends React.Component {
 
   async loadData() {
     const { location: { search } } = this.props;
-    const params = new URLSearchParams(search);
-    const vars = {};
-    if (params.get('status')) vars.status = params.get('status');
-
-    const effortMin = parseInt(params.get('effortMin'), 10);
-    if (!Number.isNaN(effortMin)) vars.effortMin = effortMin;
-    const effortMax = parseInt(params.get('effortMax'), 10);
-    if (!Number.isNaN(effortMax)) vars.effortMax = effortMax;
-
-    const query = `query issueList(
-      $status : StatusType
-      $effortMin : Int
-      $effortMax : Int
-    ) {
-      issueList(
-        status: $status
-        effortMin: $effortMin
-        effortMax: $effortMax
-      ) {
-        id title status owner
-        created effort due
-      }
-    }`;
-
-    const data = await graphQLFetch(query, vars, this.showError);
+    const data = await IssueList.fetchData(null, search, this.showError);
     if (data) {
       this.setState({ issues: data.issueList });
     }
@@ -131,6 +139,8 @@ export default class IssueList extends React.Component {
 
   render() {
     const { issues } = this.state;
+    if (issues == null) return null;
+
     const { toastVisible, toastType, toastMessage } = this.state;
     const { match } = this.props;
     return (
