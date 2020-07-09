@@ -6,6 +6,76 @@ Work through *Pro MERN Stack* (2nd Ed.)
 This is my repository for the project described in the book *Pro MERN Stack* (2nd Ed.) by Vasan Subramanian. Notes included are general notes that I thought would be beneficial for reference. Notes also include any errors or issues encountered while working throughout the book.
 
 ---
+## Chapter 13
+### Summary & Functionality Added:
+This chapter explores more advanced functionality. Functionality added includes:
+- Reafactoring Toasts to create a Higher Order Component for reuse via composition.
+- Report page with a pivot table for issues
+- Pagination of issues
+- Undo functionality for issue deletion 
+- Text-based search bar 
+
+![ch13](/readme_images/ch13-1.png)
+![ch13](/readme_images/ch13-2.png)
+
+### Chapter 13 Notes:
+#### Higer Order Component for Toast:
+-  Here we create a new component called `ToastWrapper`  that wraps each main view to add the toast functionality. In doing so, we *compose* a wrapped component using `ToastWrapper` and any of the view components, e.g. `IssueList`.
+- The pattern of creating a new component class from an existing component class and injecting into it additional functionality is called *Higher Order Component (HOC).*
+#### MongoDB Aggregate:
+- Here we explore what MongoDB provides in terms of getting summary data of a collection, that is, *aggregates*.
+- We create a file called `generate_data.mong.js` which is a script that allows us to create randomized issues to populate the database with an additional 100 issues.
+- MongoDB provieds the collection method `aggregate()` to summarize and perform various other read tasks on the collection using a *pipeline*. A pipeline is a series of transforms on the collection before returning the result set.
+- The final structure of the query will be used to help build the Report page looks like this:
+` > db.issues.aggregate([
+        { $match: { effort: { $gte: 4 } } },
+        { $group: {
+            _id: { owner: '$owner', status: '$status' },
+            count: { $sum: 1 },
+        } }
+    ])`
+    Where `match` stage acts as a filter for issues with an effort level of 4 or greater, and then the `group` stage identifies (`_id`) the grouping to be performed by owner and status and accumulate (`count`) the total amount of issues.
+#### Issue Counts API:
+-  Here we implement an Issue Counts API to make the aggregate query to MongoDB.
+- To make the array that is returned more useful, we have one elment per owner rather than one element for each owner-status combination, and one property each for the count of each status.
+#### Report Page:
+- Here we construct the UI for the Report Page.
+- The report table is a cross-tab and/or pivot table, where the table has one axis labeled with the statuses and the other axis with owners.
+- We modifiy `IssueFilter` component to use a `urlBase` instead of the previously hardcoded route `/issues` so that we can route the filter to either `IssueList` or `IssueReport`, both of which make use of the filter.
+#### List API with Pagination:
+- Here we modify the List API to support pagination.
+- We modify the schema to add a count of pages in addition to the list of issues. So instead of returning the list of issues directly, we return an object that contains the list as well as a page count.
+- In the API implementation, we use the parameter `page` to skip to a givn page and limit the number of objects returned. The MongoDB cursor method `skip()` can be used to get the lost of documents starting at an offset. Additionally, the `limit()` cursor method can be used to limit the output to a certain number.
+- Whenvever offestting into a list, we need to ensure that the list is in the same order wehen queried multiple times. As such, to guarantee a certain order, we need to include a sort specification and use the ID as a key to sort on.
+#### Pagination UI
+- Here we use the newly modified List API to display a bar of pages. We create our own minimalistic pagination bar that shows pages in chunks of five.
+- We modify the the data fetcher in the `IssueList` component to include the total count of pages in the query and save it in the state.
+- We also create a `PageLink` component to encode the currently active filter in addition to usinga `LinkContainer` to create teh actual link for the page.
+- We modify the z-index of our `Toast` component to be higher than the pagination bar, so that the toast messages do not get obscured by the pagination bar.
+#### Pagination Performance:
+-  The approach of using the same cursor to fetch the count is okay for small data sets, but it can't be used for larger data sets. The problem with a pagination that knows the number of pages is that it needs the total count of documents in the filtered set. As such, in any database, counting the number of matches is an expensive operation.
+- If the amount of records are hundreds of pages long, it is unlikely that the user will want to go to exactly the 97th page. In such cases it's advisable to just show the Previous and Next Links and not querty the toal count in ever request.
+- The ideal strategy to use with large sets is to return a value in the API's return that indicates where the next page starts, in terms of an indexed field value. For the Issue Tracker, The ID field is ideal for this. With this strategy, one wouldn't use the skip() operation, but would instead use the ID as a filter to start from, useing the `$gte` operator. The database could tehn go directly to the document and traversee from theron to fetch on page of documents.
+#### Undo Delte API
+- Here we implement the API required for an undo action for the delete operation. We change the graphql schem to have an `issueRestore`, modify `api/issue.js` to have a restore function that takes a deleted issue from the `deleted_issue` database collection and puts it back in the `issues` collection, and andwe tie the resolver to the API endopoint in the API handler.
+#### Undo Delete UI
+- We implement an Undo button (link) within the Toast message whenever a user deletes an issue. When the button is clicked it calls the Restore (Undo Delte) API.
+#### Text Index API:
+- Here we implment a Text Index API that acts not as a search filter, but as an autocomplete that finds all issues matching the words typed, and lets the user pick one of them to directly view.
+- Because it wouldn't be performant to apply a filter criterion like a regex on all issues because MongoDB would have to scan all the doucment and apply the regex to see if it matches the search term, we instead use MongoDB's text index. MongoDB's text index lets you quickly get to all the documents that contain a certain term. A text index gathers all the terms (words) in all the documents and creates a lookup table that given a term (word), returns all documents containing that term (word).
+#### Search Bar:
+- Here we implment the UI for a Search Bar.
+- Instead of implementing search components ourselves, we use **React Select** for our purpose. After the user types in a word, the results are fetched and shown ni a drowpdown, one of which can be selected.
+- We create a `Search.jsx` file for a component that will display a React select and implement the methods required to fetch the documetns using teh new search filter fin the List API.
+- React Select needs two callbacks tow show options: `loadOptions` and `filterOptions`. 
+    - `loadOptions` is an asynchronous method that needs to return an array of options. Each option is an object with properties `label` and `value`, the `label` being what the user sees and the `value` being a unique identifier. We chooose the issue ID to be the `value` and `label` is a combination of the ID and issue title.
+    - `filterOption` is expected to be called for each of the returned options to determine whether or not to show the option in the dropdown. Here, wince the options that were retrieved using `loadOptions()` are already the matched ones, we just return `true` in the callback.
+- On clicking an option from the dropdown the user gets routed to the issues edit page.
+
+### Errors & Issues:
+- On page 436, the template string `'Lorem ipsum dolor sit amet, ${i}'` needs to be surrounded by backticks rather than single quotes: `Lorem ipsum dolor sit amet, ${i}`
+- On page 467, the line history.push('/edit/${value}'); should use backticks instead of single quotes. The correct code is ``history.push(`/edit/${value}`);``
+
 ## Chapter 12
 ### Summary & Functionality Added:
 This chapter explores server-side rendering. Server-side rendering generates the HTML on the server side and sends it to the browser to be rendered on the DOM. With server-side rendering the entire HTML is constructed on the server and sent to the browser. Th need for server-rendering arises for an application to be effectively indexed by search engines. In this chapter we create an additional *About* Page to explore server rendering and later extrapolate and make our entire web application have server-rending by the end of the chapter.
