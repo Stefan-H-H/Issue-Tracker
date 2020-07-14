@@ -7,8 +7,12 @@ const { connectToDb } = require('./db.js');
 // Appolo Server middleware
 const { installHandler } = require('./api_handler.js');
 
+const auth = require('./auth.js');
+
 // Creates & initializes an express application.
 const app = express();
+
+app.use('/auth', auth.routes);
 
 installHandler(app);
 
