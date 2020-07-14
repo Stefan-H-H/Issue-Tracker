@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const cookieParser = require('cookie-parser');
 
 // connects to dabatase
 const { connectToDb } = require('./db.js');
@@ -12,6 +13,7 @@ const auth = require('./auth.js');
 // Creates & initializes an express application.
 const app = express();
 
+app.use(cookieParser());
 app.use('/auth', auth.routes);
 
 installHandler(app);
