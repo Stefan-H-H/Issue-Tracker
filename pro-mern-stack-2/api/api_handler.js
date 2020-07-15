@@ -43,9 +43,16 @@ function installHandler(app) {
   // cross origin resource sharing setting
   const enableCors = (process.env.ENABLE_CORS || 'true') === 'true';
   console.log('CORS setings:', enableCors);
-
+  let cors;
+  if (enableCors) {
+    const origin = process.env.UI_SERVER_ORIGIN || 'http://localhost:8000';
+    const methods = 'POST';
+    cors = { origin, methods, credentials: true };
+  } else {
+    cors = 'false';
+  }
   // Installs the Apollo Server as a middleare in Express
-  server.applyMiddleware({ app, path: '/graphql', cors: enableCors });
+  server.applyMiddleware({ app, path: '/graphql', cors });
 }
 
 module.exports = { installHandler };
