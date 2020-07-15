@@ -6,6 +6,61 @@ Work through *Pro MERN Stack* (2nd Ed.)
 This is my repository for the project described in the book *Pro MERN Stack* (2nd Ed.) by Vasan Subramanian. Notes included are general notes that I thought would be beneficial for reference. Notes also include any errors or issues encountered while working throughout the book.
 
 ---
+## Chapter 14
+### Summary & Functionality Added:
+Chapter 14 explores setting up authentication, session management, and restriction of application mutation based on authentication of the user. The Google Authentication API is used to allow users to login into our application directly with their Google account credentials. As such, users can view all information without signing in, but in order to make any change they have to sign in. Additionally, we make sure entire pages are rendered at the UI server even when they are authenticated pages.
+
+![ch14](/readme_images/ch14.png)
+
+### Chapter 14 Notes:
+#### Sign-in UI
+- Here we implement the user interface for signing in users.
+- We create a `SignInNavItem` that we place in the `NavBar` of the `Page` to open a new modal prompting the user for Sign-in.
+#### Google Sign-In:
+- Here we integrate Google sign-in functionality for the user.
+- We follow the  Guides provided by Google's `https://developers/google.com/identity/sign-in/web/sign-in` page to create a project and OAuth client ID.
+- We need to customize the Sign-in Button to avoid the default handling of Google's sign-in integration.
+#### Verifying the Google Token
+- Here we ensure that the credentials are verified on the back-end.
+- Validating a token at the back-end is required as a measure of security. That’s because the back-end cannot trust the UI to have done the authentication, as it is public and can also respond to any HTTP request, not just from the Issue Tracker UI.
+- The client authentication library returns a token on successful authentication, which can be verified at the back-end using Google's authentication library for Node.js. We then send this token from the UI to the back-end for it to be verified.
+- We send the Google token to the `signin` API. The token itself is obtained by a call to `googleUser.getAuthResponse().id_token`. The token is passed to the `sigin` API.
+#### JSON Web Tokens:
+- Here we utilize JSON Web Tokens to make the verified Google Token persist the information upon refresh and rerouting to other pages within the web application. 
+- JSON Web Tokens (JWT) allow us to encode all the session information that needs to be stored in a token, and encrypt it, while also allowing us to add more variables, such as  a role identifier  that can be used to apply authorization rules.
+- We establish a session that persists even across server restarts. We use HWT to generate a token and send it back to the browser. On every API call that the UI makes, the token needs to be included, identifying the signed-in user. We send the token across as a *cookie* to avoid XSS (cross-site scripting) vulnerabilities in the application, by setting an `HttpOnly` flag on the cookie. Using a cookie is the best method provided that the information is limited to 4KB and the UI and API servers are part of the same domain.
+#### Signing Out
+- Here we implement a Sign-Out API, in which we use the server to clear the JWT cookie in the browser and forget the Google authentication.
+#### Authorization
+- Typical enterprise applications will have roles and users belongings to roles. The roles will specify what operations are allowed for the user. Here we implement a simple authorization rule in which if a user is signed in, the user is allowed to make changes, otherwise unauthenticated users can only read issues.
+- As such, we prevent any API under `mutation` from being accessed by unauthenticated users. The APIs will report an error when an unauthorized operation is attempted.
+- The Apollo Server provides a mechanism by which a `context` can be passed through to all resolvers. The context holds the user information and is passed on to each resolver. If a user is not authenticated/signed in we throw an Authentication error, instead of executing an appropriate resolver.
+#### Authorization-Aware UI
+- In this section of the chapter, we make the UI aware of the signed-in status of the user and disable the Create Issue button in the navigation bar if the user is not signed-in.
+- We convert `Page` to a regular component, instead of a previously stateless component.
+- We consolidate the two separate methods for sign-in and sign-out into a single `onUserChange` method.
+- The user signed-in state will reside in the `Page` component.
+#### React Context
+- In this section, we make the other components aware of the authentication status. Here we specifically disable the Close and Delete buttons in the IssueTable and disable the Submit button in the Edit page.
+- We use the React Context API to pass properties across the component hierarchy without making intermediate components aware of it. The React Context is designed to share data that is to be considered global. 
+- The created context exposes a component called `Provider` under it, which needs to be wrapped around any hierarchy that needs the context. The component takes in a prop called `value`, which needs to be set to the value that the context will be set to in all descendant components.
+- We convert the `IssueRow` component to a regular (not stateless) component so that it may consume the  user context.
+#### CORS with Credentials
+- In this section we revert the application back to run in non-proxy mode by relaxing the CORS options while maintaining security.
+- The reason CORS previously blocked the verification of the Google token from being sent to `auth/signin` was because the origin of the application was not the same as the target of any XHR call, deeming it unsafe. The starting page was fetched from `localhost:8000`, but the API calls are being made to `localhost:3000`.
+- The default configuration of the Apollo Server enabled CORS and allowed requests to `/graphql`, but since it was not done on `/auth`, it was blocked.
+- We use the `cors` package to enable CORS for the `/auth` set of routes. We then use a CORS configuration option called `credentials` which is set to `true` to allow the server to explicitly allow credentials to be sent.
+- We change the Apollo Server CORS configuration options to allow GraphQL API calls.
+#### Server Rendering with Credentials
+- In this section we make changes to allow for server rendering with credentials.
+#### Cookie Domain
+- Cookies and CORS works slightly differently when it comes to cross-site requests. Whereas CORS recognizes even a port difference as a different origin, a cookie set by the server is tied to the *domain*, and all requests to the same domain from the browser will include the cookie. The cookie policy ignores differences in ports.
+- In this section, we set up environment variables and configure the UI so that the API endpoint is based on `api.promerstack.com:3000` and then use `ui.promernstack.com:8000` to access the application.
+
+### Errors & Issues:
+- pg 474, `.env` file should be in `ui` directory, not `ui/server`.
+
+
 ## Chapter 13
 ### Summary & Functionality Added:
 This chapter explores more advanced functionality. Functionality added includes:
@@ -28,6 +83,7 @@ This chapter explores more advanced functionality. Functionality added includes:
 - We create a file called `generate_data.mong.js` which is a script that allows us to create randomized issues to populate the database with an additional 100 issues.
 - MongoDB provides the collection method `aggregate()` to summarize and perform various other read tasks on the collection using a *pipeline*. A pipeline is a series of transforms on the collection before returning the result set.
 - The final structure of the query will be used to help build the Report page looks like this:
+
 ` > db.issues.aggregate([
         { $match: { effort: { $gte: 4 } } },
         { $group: {
@@ -35,6 +91,7 @@ This chapter explores more advanced functionality. Functionality added includes:
             count: { $sum: 1 },
         } }
     ])`
+
     Where `match` stage acts as a filter for issues with an effort level of 4 or greater, and then the `group` stage identifies (`_id`) the grouping to be performed by owner and status and accumulate (`count`) the total amount of issues.
 #### Issue Counts API:
 -  Here we implement an Issue Counts API to make the aggregate query to MongoDB.
@@ -749,6 +806,7 @@ Served as an introduction to how React applications can be built. Provides an in
  - Listing 2-1 should read  `ReactDOM.render(element, document.getElementByID('contents'));`. The listing has a typo and pass the argument `content` instead of `contents` inside the `getElementByID()` method. The typo causes the method to return `null` and not properly render *"Hello World"* because no element with that ID exists.
  - For build time JSX transformation, babel tools needed to be installed. I had an issue with installation. Resolved after realizing that `npm install --save-dev @babel/core@7 @babel/cli@7` needed to be executed within the `src` folder.
  - Listing 2-7 is missing an opening `<` and should read  `<script src="App.js></script>`.
+
 
 
 
