@@ -33,6 +33,13 @@ type IssueListWithPages {
   pages: Int
 }
 
+type User {
+  signedIn: Boolean!
+  givenName: String
+  name: String
+  email: String
+}
+
 
 "Toned down Issue, used as inputs, without server generated values."
 input IssueInputs {
@@ -61,8 +68,10 @@ input IssueUpdateInputs {
 ##### Top level declarations
 type Query {
   about: String!
-  issueList(status: StatusType,
-   effortMin: Int,
+  user: User!
+  issueList(
+    status: StatusType,
+    effortMin: Int,
     effortMax: Int
     search: String
     page: Int = 1
