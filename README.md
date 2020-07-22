@@ -6,6 +6,43 @@ Work through *Pro MERN Stack* (2nd Ed.)
 This is my repository for the project described in the book *Pro MERN Stack* (2nd Ed.) by Vasan Subramanian. Notes included are general notes that I thought would be beneficial for reference. Notes also include any errors or issues encountered while working throughout the book.
 
 ---
+## Chapter 15
+### Summary & Functionality Added:
+In this final chapter, the application is deployed publicly. I utilized MongoDB Atlas with the Google Cloud Platform to create my database on the cloud, and deployed both a UI and API web-applications through Heroku.
+
+
+
+Final deployment link:
+
+https://tracker-ui-stefanhristov.herokuapp.com
+
+My deployment repositories can be found here:
+- https://github.ccs.neu.edu/stefanhristov/tracker-ui
+- https://github.ccs.neu.edu/stefanhristov/tracker-api
+
+
+![ch15](/readme_images/ch15.png)
+
+### Chapter 15 Notes:
+#### Git Repositories
+- Heroku uses Git as it's deployment methodology.
+- We create a `tracker-api` and `tracker-ui` repositories to be used for deployment.
+#### MongoDB
+- Here I set up a cloud database using Atlas and initialized and prepopulated the database with 102 issues.
+#### Heroku
+- Login into Heroku via the CLI tools
+#### The API Application
+- The port on which the application can listen is dynamically allocated by Heroku. This is because each application is deployed in a container rather than a dedicated host. But on the internet, the same port is reflected as an HTTP(80) or an HTTPS(443) port. There's a firewall in Heroku that does this, and Heroku then sets an environment variable to let the application know which por the traffic will be received in the container. The environment variable is simply called `PORT`. As such, here we change the environment variable `API_SERVER_PORT` previously used to just `PORT`.
+- Heroku deploys applications and determines the environment, language, etc. using an auto-detection algorithm. Since there are different version of Node.js engines available that Heroku can use, we modify the `api/package.json` file to specify which version engines to run on.
+#### The UI Application
+- We make similar changes, here as we did for the API application section.
+- Additionally, because the UI application needs compilation before the files needed to start the server are ready, we use a `heroku-post-build` script to address this.
+#### The Proxy Mode:
+- Here we configure the Heroku configuration settings to utilize an API proxy target to correctly navigate the website and update the origin accordingly.
+
+### Errors & Issues:
+- Added  `source-map-support` module dependency to UI `package.json` file for deployment. I was otherwise having, Heroku log errors.
+
 ## Chapter 14
 ### Summary & Functionality Added:
 Chapter 14 explores setting up authentication, session management, and restriction of application mutation based on authentication of the user. The Google Authentication API is used to allow users to login into our application directly with their Google account credentials. As such, users can view all information without signing in, but in order to make any change they have to sign in. Additionally, we make sure entire pages are rendered at the UI server even when they are authenticated pages.
@@ -80,7 +117,7 @@ This chapter explores more advanced functionality. Functionality added includes:
 - The pattern of creating a new component class from an existing component class and injecting into it additional functionality is called *Higher Order Component (HOC).*
 #### MongoDB Aggregate:
 - Here we explore what MongoDB provides in terms of getting summary data of a collection, that is, *aggregates*.
-- We create a file called `generate_data.mong.js` which is a script that allows us to create randomized issues to populate the database with an additional 100 issues.
+- We create a file called `generate_data.mongo.js` which is a script that allows us to create randomized issues to populate the database with an additional 100 issues.
 - MongoDB provides the collection method `aggregate()` to summarize and perform various other read tasks on the collection using a *pipeline*. A pipeline is a series of transforms on the collection before returning the result set.
 - The final structure of the query will be used to help build the Report page looks like this:
 
@@ -806,6 +843,7 @@ Served as an introduction to how React applications can be built. Provides an in
  - Listing 2-1 should read  `ReactDOM.render(element, document.getElementByID('contents'));`. The listing has a typo and pass the argument `content` instead of `contents` inside the `getElementByID()` method. The typo causes the method to return `null` and not properly render *"Hello World"* because no element with that ID exists.
  - For build time JSX transformation, babel tools needed to be installed. I had an issue with installation. Resolved after realizing that `npm install --save-dev @babel/core@7 @babel/cli@7` needed to be executed within the `src` folder.
  - Listing 2-7 is missing an opening `<` and should read  `<script src="App.js></script>`.
+
 
 
 
